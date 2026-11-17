@@ -1,0 +1,89 @@
+{
+  "schema_version": "multihorizon-1",
+  "model_version": "wk-lightgbm-60d-v2",
+  "forecast_uses": [
+    "projection"
+  ],
+  "algorithm": "LightGBM",
+  "horizon_days": 60,
+  "timezone": "Asia/Jakarta",
+  "target": "Total unit terjual t+1 sampai t+60.",
+  "history_days": 90,
+  "feature_set": "LightGBM_riwayat_jadwal_idulfitri",
+  "feature_names": [
+    "branch_code",
+    "category_code",
+    "karat",
+    "sales_7d",
+    "sales_14d",
+    "sales_30d",
+    "sales_60d",
+    "sales_90d",
+    "days_since_last_sale",
+    "open_days_next_60",
+    "pre_eid_days_next_60"
+  ],
+  "category_levels": {
+    "branch_code": {
+      "DSA": 0,
+      "MDR": 1,
+      "PWG": 2,
+      "SPH": 3
+    },
+    "category_code": {
+      "ANTING": 0,
+      "CINCIN": 1,
+      "GELANG": 2,
+      "KALUNG": 3,
+      "LIONTIN": 4
+    }
+  },
+  "known_karat": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
+  ],
+  "nullable_features": [
+    "days_since_last_sale"
+  ],
+  "python_version": "3.13.18",
+  "package_versions": {
+    "lightgbm": "4.6.0",
+    "numpy": "2.4.6",
+    "pandas": "2.2.3",
+    "scipy": "1.16.3"
+  },
+  "training_transactions": "sintetis",
+  "periods": {
+    "latih": [
+      "2023-01-01",
+      "2024-12-31"
+    ],
+    "validasi": [
+      "2025-01-01",
+      "2025-09-30"
+    ],
+    "uji": [
+      "2025-10-01",
+      "2026-07-31"
+    ]
+  },
+  "days_since_last_sale_missing": "Gunakan NaN jika belum ada penjualan yang tercatat.",
+  "training_rows": 197880,
+  "validation_rows": 62220,
+  "best_iteration": 777
+}

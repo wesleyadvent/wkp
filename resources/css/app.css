@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none !important;
+}
+
+@layer components {
+    .action-button { @apply inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2; margin: 2px; white-space: nowrap; }
+    .action-edit, .action-detail { @apply border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 focus:ring-indigo-500; }
+    .action-delete { @apply border-red-200 bg-red-50 text-red-700 hover:bg-red-100 focus:ring-red-500; }
+    .action-print { @apply border-gray-900 bg-gray-900 text-white hover:bg-gray-700 focus:ring-gray-500; }
+    .receipt { @apply rounded-xl border border-gray-200 bg-white p-6 shadow-sm; }
+    .receipt h3 { @apply mb-3 mt-6 text-base font-semibold text-gray-900; }
+    .receipt dl { @apply grid gap-4 sm:grid-cols-2; }
+    .receipt dt { @apply text-xs uppercase tracking-wide text-gray-500; }
+    .receipt dd { @apply mt-1 text-sm font-medium text-gray-900; overflow-wrap: anywhere; }
+    .receipt table { @apply w-full text-left text-sm; }
+    .receipt th { @apply bg-gray-50 text-xs uppercase text-gray-600; }
+    .receipt th, .receipt td { @apply border-b border-gray-200 px-3 py-3; }
+}
+
+
+/* Shared table presentation is screen-only so receipt and report print geometry stays intact. */
+@media screen {
+    .app-ui main { min-width: 0; }
+    .app-ui .table-scroll {
+        max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain;
+        border: 1px solid #e5e9f0; border-radius: 14px; background: #fff;
+        box-shadow: 0 2px 8px #17203305; scrollbar-width: thin; scrollbar-color: #cbd5e1 #f8fafc;
+    }
+    .app-ui .table-scroll:focus-visible { outline: 3px solid #e7bd65; outline-offset: 3px; }
+    .app-ui .data-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 13px; line-height: 1.65; }
+    .app-ui .data-table > thead { background: #f8fafc; }
+    .app-ui .data-table > thead > tr > th {
+        padding: 15px 20px; border: 0; border-bottom: 1px solid #e2e8f0;
+        color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .055em; white-space: nowrap; text-align: left;
+    }
+    .app-ui .data-table > tbody > tr > td {
+        padding: 18px 20px; border: 0; border-bottom: 1px solid #eef1f5;
+        color: #475569; vertical-align: middle; overflow-wrap: break-word;
+    }
+    .app-ui .data-table > tbody > tr { border: 0; background: white; transition: background-color .15s ease; }
+    .app-ui .data-table > tbody > tr:nth-child(even) { background: #fbfcfe; }
+    .app-ui .data-table > tbody > tr:hover,
+    .app-ui .data-table > tbody > tr:focus-within { background: #fffbf2; }
+    .app-ui .data-table > tbody > tr:last-child > td { border-bottom: 0; }
+    .app-ui .data-table > tbody > tr > td:first-child:not([colspan]) { color: #1e293b; font-weight: 500; }
+    .app-ui .data-table > tbody > tr > td[colspan] { padding: 52px 24px; text-align: center; color: #94a3b8; font-weight: 400; }
+    .app-ui .data-table > thead > tr > th.text-right,
+    .app-ui .data-table > tbody > tr > td.text-right,
+    .app-ui .data-table > thead > tr > th.table-number,
+    .app-ui .data-table > tbody > tr > td.table-number { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .app-ui .data-table td.table-number { color: #1e293b; font-weight: 600; }
+    .app-ui .data-table td:has(> .action-button) { white-space: nowrap; }
+    .app-ui .data-table .action-button { min-height: 34px; padding: 7px 12px; margin: 2px; border-radius: 8px; font-size: 12px; line-height: 1.4; box-shadow: none; }
+    .app-ui .data-table .action-detail { color: #475569; border-color: #dbe2ea; background: #fff; }
+    .app-ui .data-table .action-detail:hover { background: #f1f5f9; border-color: #aebdce; }
+    .app-ui .data-table .action-edit { color: #94600b; border-color: #f0dca7; background: #fff9eb; }
+    .app-ui .data-table .action-edit:hover { background: #fff0c7; }
+    .app-ui .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid transparent; border-radius: 999px; font-size: 11px; line-height: 1.5; font-weight: 600; white-space: nowrap; }
+    .app-ui .status-badge::before { content: ''; height: 5px; width: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .app-ui .status-badge-success { background: #edf9f1; border-color: #d4eddd; color: #21824b; }
+    .app-ui .status-badge-muted { background: #f1f5f9; border-color: #e2e8f0; color: #64748b; }
+    .app-ui .status-badge-warning { background: #fff8e7; border-color: #f6e5b8; color: #9a680a; }
+    .app-ui .status-badge-info { background: #eef4ff; border-color: #dce7fa; color: #426aa3; }
+    .app-ui .report-data { padding: 0; overflow: hidden; border-radius: 14px; }
+    .app-ui .report-table { min-width: 1200px; }
+    .app-ui .report-table > tbody > tr > td { vertical-align: top; }
+    .app-ui .report-table > thead > tr > th { white-space: normal; }
+    .app-ui .report-table td:nth-child(1) { min-width: 190px; }
+    .app-ui .report-table td:nth-child(2) { min-width: 220px; }
+    .app-ui .report-table td:nth-child(3) { min-width: 300px; }
+    .app-ui .table-primary { color: #1e293b; font-size: 13px; font-weight: 600; }
+    .app-ui .table-secondary { display: block; margin-top: 5px; color: #7b8799; font-size: 12px; font-weight: 400; }
+    .app-ui .table-item { padding: 12px; border: 1px solid #e7ecf3; border-radius: 10px; background: #fff; margin-bottom: 10px; font-size: 12px; }
+    .app-ui .table-item:last-child { margin-bottom: 0; }
+    .app-ui .inventory-analysis-table { table-layout: fixed; min-width: 1080px; }
+    .app-ui .inventory-analysis-table .inventory-col-group { width: 18%; }
+    .app-ui .inventory-analysis-table .inventory-col-stock { width: 7%; }
+    .app-ui .inventory-analysis-table .inventory-col-sales { width: 17%; }
+    .app-ui .inventory-analysis-table .inventory-col-trend { width: 13%; }
+    .app-ui .inventory-analysis-table .inventory-col-plan { width: 15%; }
+    .app-ui .inventory-analysis-table .inventory-col-number { width: 8%; }
+    .app-ui .inventory-analysis-table .inventory-col-status { width: 14%; }
+    .app-ui .inventory-analysis-table > thead > tr > th { padding: 13px 12px; white-space: normal; line-height: 1.35; }
+    .app-ui .inventory-analysis-table > tbody > tr > td { padding: 14px 12px; overflow-wrap: normal; }
+    .app-ui .inventory-primary { display: block; color: #1e293b; font-weight: 600; line-height: 1.4; }
+    .app-ui .inventory-secondary { display: block; margin-top: 3px; color: #7b8799; font-size: 11px; line-height: 1.4; }
+    .app-ui .inventory-emphasis { color: #1e293b; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .app-ui .inventory-metrics { display: grid; gap: 3px; margin: 0; }
+    .app-ui .inventory-metrics > div { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .app-ui .inventory-metrics dt { color: #7b8799; font-size: 10px; line-height: 1.35; }
+    .app-ui .inventory-metrics dd { margin: 0; color: #334155; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .app-ui .inventory-badge { display: inline-flex; max-width: 100%; align-items: center; margin-top: 5px; padding: 3px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; line-height: 1.45; white-space: normal; }
+    @media (min-width: 1280px) {
+        .app-ui .inventory-analysis-scroll { overflow-x: visible; }
+        .app-ui .inventory-analysis-table { min-width: 100%; }
+    }
+    .app-ui .report-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 22px 24px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+    .app-ui .summary-card { padding: 13px 15px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; }
+    .app-ui .summary-card span, .app-ui .summary-card small { display: block; color: #8290a2; font-size: 11px; }
+    .app-ui .summary-card strong { display: block; margin: 3px 0; color: #172033; font-size: 17px; }
+    .app-ui .report-summary .report-note { grid-column: 1 / -1; margin: 0; color: #8290a2; font-size: 12px; }
+    .app-ui main nav[role="navigation"] { margin-top: 16px; padding: 14px 16px; border: 1px solid #e5e9f0; border-radius: 12px; background: white; gap: 16px; }
+    .app-ui main nav[role="navigation"] p { font-size: 12px; color: #718096; }
+    .app-ui main nav[role="navigation"] a { transition: background-color .15s; }
+    .app-ui main nav[role="navigation"] a:hover { background: #fff8e7; color: #94600b; }
+    .app-ui main nav[role="navigation"] [aria-current="page"] > span { background: #172033; color: white; border-color: #172033; }
+    @media (max-width: 640px) {
+        .app-ui main > .py-8 { padding: 20px 12px; }
+        .app-ui .data-table > thead > tr > th { padding: 13px 14px; }
+        .app-ui .data-table > tbody > tr > td { padding: 14px; }
+        .app-ui .report-summary { grid-template-columns: 1fr; padding: 18px; }
+        .app-ui .report-summary .report-note { grid-column: auto; }
+        .app-ui .table-scroll { border-radius: 10px; }
+        .app-ui .data-table .action-button { min-height: 40px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .app-ui .data-table > tbody > tr { transition: none; }
+    }
+}

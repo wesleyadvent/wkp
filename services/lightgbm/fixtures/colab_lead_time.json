@@ -1,0 +1,142 @@
+[
+  {
+    "group": {
+      "kode_cabang": "DSA",
+      "kategori": "ANTING",
+      "kadar": 8
+    },
+    "input": {
+      "lead_time_days": 3,
+      "forecast_date": "2025-10-01",
+      "features": {
+        "branch_code": 0.0,
+        "category_code": 0.0,
+        "karat": 8.0,
+        "sales_7d": 5.0,
+        "sales_14d": 12.0,
+        "sales_30d": 25.0,
+        "sales_60d": 52.0,
+        "sales_90d": 79.0,
+        "days_since_last_sale": 0.0,
+        "open_days_next_3": 3.0,
+        "pre_eid_days_next_3": 0.0
+      }
+    },
+    "output": {
+      "forecast_date": "2025-10-01",
+      "forecast_start": "2025-10-02",
+      "forecast_end": "2025-10-04",
+      "lead_time_days": 3,
+      "predicted_units": 2.5185972397814753
+    },
+    "example_rop": {
+      "safety_stock": 2,
+      "rop": 5
+    }
+  },
+  {
+    "group": {
+      "kode_cabang": "DSA",
+      "kategori": "ANTING",
+      "kadar": 8
+    },
+    "input": {
+      "lead_time_days": 7,
+      "forecast_date": "2025-10-01",
+      "features": {
+        "branch_code": 0.0,
+        "category_code": 0.0,
+        "karat": 8.0,
+        "sales_7d": 5.0,
+        "sales_14d": 12.0,
+        "sales_30d": 25.0,
+        "sales_60d": 52.0,
+        "sales_90d": 79.0,
+        "days_since_last_sale": 0.0,
+        "open_days_next_7": 7.0,
+        "pre_eid_days_next_7": 0.0
+      }
+    },
+    "output": {
+      "forecast_date": "2025-10-01",
+      "forecast_start": "2025-10-02",
+      "forecast_end": "2025-10-08",
+      "lead_time_days": 7,
+      "predicted_units": 5.602828504772171
+    },
+    "example_rop": {
+      "safety_stock": 2,
+      "rop": 8
+    }
+  },
+  {
+    "group": {
+      "kode_cabang": "DSA",
+      "kategori": "ANTING",
+      "kadar": 8
+    },
+    "input": {
+      "lead_time_days": 14,
+      "forecast_date": "2025-10-01",
+      "features": {
+        "branch_code": 0.0,
+        "category_code": 0.0,
+        "karat": 8.0,
+        "sales_7d": 5.0,
+        "sales_14d": 12.0,
+        "sales_30d": 25.0,
+        "sales_60d": 52.0,
+        "sales_90d": 79.0,
+        "days_since_last_sale": 0.0,
+        "open_days_next_14": 14.0,
+        "pre_eid_days_next_14": 0.0
+      }
+    },
+    "output": {
+      "forecast_date": "2025-10-01",
+      "forecast_start": "2025-10-02",
+      "forecast_end": "2025-10-15",
+      "lead_time_days": 14,
+      "predicted_units": 12.32748525673123
+    },
+    "example_rop": {
+      "safety_stock": 2,
+      "rop": 15
+    }
+  },
+  {
+    "group": {
+      "kode_cabang": "DSA",
+      "kategori": "ANTING",
+      "kadar": 8
+    },
+    "input": {
+      "lead_time_days": 21,
+      "forecast_date": "2025-10-01",
+      "features": {
+        "branch_code": 0.0,
+        "category_code": 0.0,
+        "karat": 8.0,
+        "sales_7d": 5.0,
+        "sales_14d": 12.0,
+        "sales_30d": 25.0,
+        "sales_60d": 52.0,
+        "sales_90d": 79.0,
+        "days_since_last_sale": 0.0,
+        "open_days_next_21": 21.0,
+        "pre_eid_days_next_21": 0.0
+      }
+    },
+    "output": {
+      "forecast_date": "2025-10-01",
+      "forecast_start": "2025-10-02",
+      "forecast_end": "2025-10-22",
+      "lead_time_days": 21,
+      "predicted_units": 18.220732651861315
+    },
+    "example_rop": {
+      "safety_stock": 2,
+      "rop": 21
+    }
+  }
+]

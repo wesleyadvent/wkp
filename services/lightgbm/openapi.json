@@ -1,0 +1,35 @@
+{
+  "openapi": "3.1.0",
+  "info": {"title": "Wijaya Kusuma LightGBM Internal Inference", "version": "multihorizon-1", "description": "Contract for the user's Colab PKLs. Features are built in Laravel; no customer data or targets are sent. Models use synthetic training transactions."},
+  "servers": [{"url": "http://127.0.0.1:5001"}],
+  "paths": {
+    "/health": {"get": {"operationId": "health", "responses": {"200": {"description": "All seven models loaded and metadata checks passed."}, "503": {"description": "At least one model is unavailable; ready=false and errors identify the horizon."}}}},
+    "/predict": {"post": {
+      "operationId": "predict", "description": "Atomic batch, 1–500 unique groups. Model is loaded once at startup. Lead time uses the exact 3/7/14/21-day model; projection uses the exact 30/60/90-day model. The forecast_use must match the horizon's metadata. No scaling or interpolation of another horizon.",
+      "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PredictRequest"}, "example": {
+        "schema_version": "multihorizon-1", "model_version": "wk-lightgbm-14d-v2", "as_of_date": "2025-10-01", "horizon_days": 14, "forecast_use": "lead_time",
+        "groups": [{"group_key": "DSA:ANTING:8", "features": {"branch_code": 0, "category_code": 0, "karat": 8, "sales_7d": 5, "sales_14d": 12, "sales_30d": 25, "sales_60d": 52, "sales_90d": 79, "days_since_last_sale": 0, "open_days_next_14": 14, "pre_eid_days_next_14": 0}}]
+      }}}},
+      "responses": {
+        "200": {"description": "One finite nonnegative decimal prediction for every requested group. Echoed identity fields must match the request.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PredictResponse"}, "example": {"schema_version": "multihorizon-1", "model_version": "wk-lightgbm-14d-v2", "as_of_date": "2025-10-01", "horizon_days": 14, "forecast_use": "lead_time", "predictions": [{"group_key": "DSA:ANTING:8", "predicted_units": 12.32748525673123}]}}}},
+        "400": {"description": "Invalid JSON or content type.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+        "422": {"description": "Invalid schema, version, category encoding, feature set, date, horizon or forecast use. No partial predictions.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+        "503": {"description": "Model not ready or inference failed. Laravel marks the requested forecast unavailable.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+      }
+    }}
+  },
+  "components": {"schemas": {
+    "PredictRequest": {"type": "object", "required": ["schema_version", "model_version", "as_of_date", "horizon_days", "forecast_use", "groups"], "properties": {
+      "schema_version": {"const": "multihorizon-1"}, "model_version": {"type": "string"}, "as_of_date": {"type": "string", "format": "date", "description": "Completed date before today in Asia/Jakarta."},
+      "horizon_days": {"type": "integer", "enum": [3, 7, 14, 21, 30, 60, 90]}, "forecast_use": {"type": "string", "enum": ["lead_time", "projection"]},
+      "groups": {"type": "array", "minItems": 1, "maxItems": 500, "items": {"type": "object", "required": ["group_key", "features"], "properties": {
+        "group_key": {"type": "string", "minLength": 1, "maxLength": 200}, "features": {"type": "object", "description": "Exactly feature_names from metadata_Hd.json in its order. Encoded branch/category IDs, numeric karat, integer sales totals and future calendar counts. Only days_since_last_sale may be null. Calendar feature names end in the requested horizon. Unknown or extra features are rejected.", "additionalProperties": {"type": ["number", "null"]}}
+      }}}
+    }},
+    "PredictResponse": {"type": "object", "required": ["schema_version", "model_version", "as_of_date", "horizon_days", "forecast_use", "predictions"], "properties": {
+      "schema_version": {"const": "multihorizon-1"}, "model_version": {"type": "string"}, "as_of_date": {"type": "string", "format": "date"}, "horizon_days": {"type": "integer"}, "forecast_use": {"type": "string"},
+      "predictions": {"type": "array", "items": {"type": "object", "required": ["group_key", "predicted_units"], "properties": {"group_key": {"type": "string"}, "predicted_units": {"type": "number", "minimum": 0}}}}
+    }},
+    "Error": {"type": "object", "required": ["error"], "properties": {"error": {"type": "object", "required": ["code", "message"], "properties": {"code": {"type": "string"}, "message": {"type": "string"}}}}}
+  }}
+}
