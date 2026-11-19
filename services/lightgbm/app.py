@@ -42,7 +42,6 @@ def load_models(folder):
             for file_path in (path, folder / f"metadata_{horizon}d.json"):
                 if hashlib.sha256(file_path.read_bytes()).hexdigest() != manifest[file_path.name]:
                     raise ValueError("Model/metadata checksum mismatch")
-            # Only the user's explicitly supplied, locally installed archive is loaded.
             with path.open("rb") as handle:
                 bundle = pickle.load(handle)
             if json.loads(json.dumps(bundle["metadata"])) != metadata or bundle["model"].feature_name() != metadata["feature_names"]:
@@ -129,7 +128,8 @@ def create_app(model_dir=None):
                      "training_transactions": b["metadata"]["training_transactions"]}
                     for h, b in sorted(models.items())],
             errors=errors,
-            runtime={name: version(name) for name in ("lightgbm", "numpy", "pandas", "scipy")},
+            runtime={name: version(name) for name in ("lightgbm", "numpy", 
+                                                      "pandas", "scipy")},
         ), 200 if ready else 503
 
     @app.post("/predict")

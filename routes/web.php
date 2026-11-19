@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnalisisPersediaanController;
+use App\Http\Controllers\ArimaForecastController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\DasborController;
@@ -70,6 +71,7 @@ Route::middleware(['auth', 'branch.login.enabled'])->group(function () {
     Route::get('reports/services', [LaporanController::class, 'services'])->name('reports.services');
     Route::get('reports/profit-loss', [LaporanController::class, 'profitLoss'])->name('reports.profit-loss');
     Route::get('inventory-analysis', [AnalisisPersediaanController::class, 'index'])->name('inventory-analysis.index');
+    Route::post('inventory-analysis/arima/prepare', ArimaForecastController::class)->name('inventory-analysis.arima.prepare');
     Route::get('forecast-comparison', PerbandinganRamalanController::class)->name('forecast-comparison.index');
     foreach (['sma' => 'SMA', 'wma' => 'WMA', 'arima' => 'ARIMA', 'lightgbm' => 'LightGBM'] as $slug => $method) {
         Route::get('inventory-analysis/'.$slug, [AnalisisPersediaanController::class, 'index'])->defaults('forecast_method', $method)->name('inventory-analysis.'.$slug);

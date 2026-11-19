@@ -66,7 +66,8 @@ class ForecastComparisonService
                 }
                 $valid = true;
                 foreach (['actual', ...self::METHODS] as $field) {
-                    if (! is_numeric($row[$field]) || ! is_finite((float) $row[$field]) || (float) $row[$field] < 0) {
+                    if (! is_numeric($row[$field]) || ! is_finite((float) $row[$field]) 
+                        || (float) $row[$field] < 0) {
                         $valid = false;
                     }
                 }

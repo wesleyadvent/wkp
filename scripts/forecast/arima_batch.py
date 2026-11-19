@@ -33,7 +33,8 @@ def fit_group(group):
                 if not all(math.isfinite(y) for y in predicted):
                     continue
                 if best is None or fit.aicc < best['aicc']:
-                    best = dict(result, status='ok', total=sum(predicted), order=list(order), aicc=float(fit.aicc), daily=predicted, reason=None)
+                    best = dict(result, status='ok', total=sum(predicted), order=list(order), 
+                                aicc=float(fit.aicc), daily=predicted, reason=None)
             except Exception:
                 continue
     return best or dict(result, reason='Tidak ada kandidat yang konvergen dan valid.')

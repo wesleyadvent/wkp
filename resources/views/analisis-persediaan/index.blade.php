@@ -69,6 +69,16 @@
                 </div>
             </form>
 
+            @if($metode === 'ARIMA' && $arimaPending > 0)
+                <div role="status" aria-live="polite" class="space-y-2 rounded border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900"
+                    data-arima-prepare="{{ route('inventory-analysis.arima.prepare') }}" data-cutoff="{{ $cutoff }}" data-branch="{{ $selectedBranchId }}">
+                    <p class="font-semibold">ARIMA sedang dihitung otomatis untuk tanggal yang dipilih.</p>
+                    <p data-arima-progress>{{ $arimaPending }} kelompok menunggu perhitungan. Biarkan halaman ini terbuka; hasil akan diperbarui setelah selesai.</p>
+                    <p>Kelompok yang belum memenuhi syarat riwayat tetap akan disertai alasan.</p>
+                    <noscript>Aktifkan JavaScript agar perhitungan otomatis dapat berjalan.</noscript>
+                </div>
+            @endif
+
             @if($metode === 'LightGBM')
                 @if($lightgbmStatus && $lightgbmStatus['state'] !== 'ready')
                     <div role="alert" class="space-y-2 rounded border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">

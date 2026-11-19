@@ -6,6 +6,7 @@ use App\Models\Cabang;
 use App\Models\HargaEmas;
 use App\Models\KategoriBarang;
 use App\Models\KonfigurasiPersediaan;
+use App\Services\ArimaForecastBuilder;
 use App\Services\AuditLogService;
 use App\Services\InventoryAnalysisService;
 use Carbon\CarbonImmutable;
@@ -61,6 +62,7 @@ class AnalisisPersediaanController extends Controller
             'periode' => $periode,
             'metode' => $metode,
             'lightgbmStatus' => $analysisService->lightgbmStatus(),
+            'arimaPending' => $metode === 'ARIMA' ? count(app(ArimaForecastBuilder::class)->pending($selectedBranchId, $cutoff)) : 0,
             'analysisRoute' => 'inventory-analysis.'.strtolower($metode),
             'settingsPrefix' => 'inventory-settings.'.strtolower($metode),
             'cutoff' => $cutoff->toDateString(),

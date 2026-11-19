@@ -4,8 +4,15 @@
     $weight = fn ($value) => number_format($value ?? 0, 3, ',', '.').' gram';
 @endphp
 <article class="receipt">
+    @if($isSale && ($printLayout ?? false))
+    <header class="receipt-header">
+        <img class="store-logo" src="{{ asset('images/wkp-gradasi.png') }}" alt="Logo Toko Emas Wijaya Kusuma" width="76" height="76">
+        <div class="store-heading"><strong>TOKO EMAS WIJAYA KUSUMA</strong><span>NOTA PENJUALAN</span><h1>{{ $transaction->nomor_nota }}</h1></div>
+    </header>
+    @else
     <p class="text-sm text-gray-500">Toko Emas Wijaya Kusuma � {{ $isSale ? 'Penjualan' : 'Pembelian' }}</p>
     <h1 class="mt-2 text-2xl font-bold">{{ $transaction->nomor_nota }}</h1>
+    @endif
     <h3>Informasi transaksi</h3>
     <dl>
         <div><dt>Tanggal</dt><dd>{{ $transaction->tanggal?->format('d/m/Y') }}</dd></div>
