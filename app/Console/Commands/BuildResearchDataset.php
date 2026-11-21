@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class BuildResearchDataset extends Command
 {
     protected $signature = 'data:build-forecast {--output= : Lokasi CSV hasil}';
-    protected $description = 'Bangun dataset ramalan 14 hari dari transaksi valid dan kalender cabang';
+    protected $description = 'Bangun dataset prediksi 14 hari dari transaksi valid dan kalender cabang';
 
     public function handle(): int
     {
@@ -20,14 +20,15 @@ class BuildResearchDataset extends Command
         if ($prices->isEmpty()) { $this->error('Harga ANTAM belum tersedia.'); return self::FAILURE; }
         $shopPrices = [];
         foreach (DB::table('harga_emas')->orderBy('tanggal')->orderBy('id')->cursor() as $price) {
-            $shopPrices[$price->kadar][] = [$price->tanggal, $price->harga_per_gram];
+            $priceDate = CarbonImmutable::parse($price->tanggal, 'Asia/Jakarta')->toDateString();
+            $shopPrices[$price->kadar][] = [$priceDate, $price->harga_per_gram];
         }
         $open = [];
         foreach (DB::table('kalender_cabang')->get() as $row) $open[$row->branch_id][$row->tanggal] = (bool) $row->buka;
         $path = $this->option('output') ?: storage_path('app/private/dataset-forecast.csv');
         $handle = fopen($path, 'w');
         if (! $handle) { $this->error('Tidak dapat menulis dataset.'); return self::FAILURE; }
-        fputcsv($handle, ['tanggal_ramalan','kode_cabang','kategori','kadar','penjualan_hari_ini','total_7','total_14','total_30','total_60','total_90','hari_buka_14','jarak_idulfitri','h_minus_21_1_horizon','harga_antam','tanggal_sumber_harga','perubahan_harga_7_persen','harga_toko_per_gram','tanggal_harga_toko','target_14','akhir_target','split']);
+        fputcsv($handle, ['tanggal_prediksi','kode_cabang','kategori','kadar','penjualan_hari_ini','total_7','total_14','total_30','total_60','total_90','hari_buka_14','jarak_idulfitri','h_minus_21_1_horizon','harga_antam','tanggal_sumber_harga','perubahan_harga_7_persen','harga_toko_per_gram','tanggal_harga_toko','target_14','akhir_target','split']);
         $count = 0;
         foreach (DB::table('cabang')->orderBy('id')->get() as $branch) {
             $series = [];

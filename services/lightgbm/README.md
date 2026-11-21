@@ -1,6 +1,6 @@
 # Layanan LightGBM Wijaya Kusuma
 
-Model dan fitur mengikuti PKL/metadata Colab pada folder `docs`. Dokumentasi pemakaian, pemasangan ulang, ekspor, status ramalan dan pengujian berada di [panduan integrasi](../../docs/LightGBM_Integrasi_Flask.md); [kamus data](../../docs/LightGBM_Kamus_Data.md) menjelaskan setiap kolom. Kontrak API tersimpan di [openapi.json](openapi.json).
+Model dan fitur mengikuti PKL/metadata Colab pada folder `docs`. Dokumentasi pemakaian, pemasangan ulang, ekspor, status prediksi dan pengujian berada di [panduan integrasi](../../docs/LightGBM_Integrasi_Flask.md); [kamus data](../../docs/LightGBM_Kamus_Data.md) menjelaskan setiap kolom. Kontrak API tersimpan di [openapi.json](openapi.json).
 
 Model aktif berada di `services/lightgbm/models/`: `lightgbm_3d.pkl`, `lightgbm_7d.pkl`, `lightgbm_14d.pkl`, `lightgbm_21d.pkl` untuk lead time, serta `lightgbm_30d.pkl`, `lightgbm_60d.pkl`, `lightgbm_90d.pkl` untuk proyeksi. Setiap model didampingi `metadata_Hd.json`; `manifest.json` mencatat checksum. Sumbernya adalah ZIP terbaru di `docs/Hasil_LightGBM_ARIMA_Wijaya_Kusuma_Lead_Time_dan_Proyeksi.zip`.
 

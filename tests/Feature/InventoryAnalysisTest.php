@@ -73,8 +73,8 @@ class InventoryAnalysisTest extends TestCase
         $this->assertEquals(100.0, $row['persentase_perubahan']);
         $this->assertSame('meningkat', $row['status_tren']);
         $this->assertSame(14, $row['lead_time_hari']);
-        $this->assertEqualsWithDelta(4 / 30 * 14, $row['ramalan_unit'], 0.00001);
-        $this->assertEqualsWithDelta(4, $row['ramalan_unit_periode'], 0.00001);
+        $this->assertEqualsWithDelta(4 / 30 * 14, $row['prediksi_unit'], 0.00001);
+        $this->assertEqualsWithDelta(4, $row['prediksi_unit_periode'], 0.00001);
         $this->assertSame(2, $row['safety_stock']);
         $this->assertSame(4, $row['rop']);
         $this->assertSame(3, $row['jumlah_perlu_disiapkan']);
@@ -123,16 +123,16 @@ class InventoryAnalysisTest extends TestCase
                     : array_sum(array_map(fn ($offset) => $period - $offset, $inWindow)) / ($period * ($period + 1) / 2);
                 $row = app(InventoryAnalysisService::class)->analyze($this->branch->id, $period, $end, $method)->first();
 
-                $this->assertEqualsWithDelta($daily * 20, $row['ramalan_unit'], 0.00001);
+                $this->assertEqualsWithDelta($daily * 20, $row['prediksi_unit'], 0.00001);
                 $this->assertEqualsWithDelta($daily, $row['estimasi_harian_metode'], 0.00001);
-                $this->assertEqualsWithDelta($daily * $period, $row['ramalan_unit_periode'], 0.00001);
+                $this->assertEqualsWithDelta($daily * $period, $row['prediksi_unit_periode'], 0.00001);
                 $this->assertSame($method, $row['metode_efektif_periode']);
                 $this->assertSame((int) ceil($daily * 20 + 5), $row['rop']);
                 $this->assertSame(max(0, $row['rop'] - 2), $row['jumlah_perlu_disiapkan']);
                 $response = $this->get(route('inventory-analysis.'.strtolower($method), ['periode' => $period, 'cutoff' => $end->toDateString()]))
                     ->assertOk()
-                    ->assertSee('Ramalan lead time (20 hari)')
-                    ->assertSee('Ramalan jendela ('.$period.' hari)')
+                    ->assertSee('Prediksi lead time (20 hari)')
+                    ->assertSee('Prediksi jendela ('.$period.' hari)')
                     ->assertSee(number_format($daily * $period, 0, ',', '.').' unit');
                 $response->assertSee($method.'/hari');
                 if ($method === 'WMA') {

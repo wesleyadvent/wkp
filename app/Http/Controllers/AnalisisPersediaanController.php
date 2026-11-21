@@ -48,7 +48,7 @@ class AnalisisPersediaanController extends Controller
             ->values();
         $summary = [
             'belum_lengkap' => $allRows->where('status_persediaan', 'data_belum_lengkap')->count(),
-            'ramalan_belum_tersedia' => in_array($metode, ['ARIMA', 'LightGBM'], true) ? $allRows->filter(fn ($r) => $r['ramalan_unit'] === null || $r['ramalan_unit_periode'] === null)->count() : 0,
+            'prediksi_belum_tersedia' => in_array($metode, ['ARIMA', 'LightGBM'], true) ? $allRows->filter(fn ($r) => $r['prediksi_unit'] === null || $r['prediksi_unit_periode'] === null)->count() : 0,
             'aman' => $allRows->where('status_persediaan', 'aman')->count(),
             'perlu_perhatian' => $allRows->where('status_persediaan', 'perlu_perhatian')->count(),
             'kritis' => $allRows->where('status_persediaan', 'kritis')->count(),

@@ -19,7 +19,7 @@ use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenghapusanTransaksiController;
 use App\Http\Controllers\PenjualanController;
-use App\Http\Controllers\PerbandinganRamalanController;
+use App\Http\Controllers\PerbandinganPrediksiController;
 use App\Http\Controllers\ProfilController;
 use Illuminate\Support\Facades\Route;
 
@@ -72,7 +72,7 @@ Route::middleware(['auth', 'branch.login.enabled'])->group(function () {
     Route::get('reports/profit-loss', [LaporanController::class, 'profitLoss'])->name('reports.profit-loss');
     Route::get('inventory-analysis', [AnalisisPersediaanController::class, 'index'])->name('inventory-analysis.index');
     Route::post('inventory-analysis/arima/prepare', ArimaForecastController::class)->name('inventory-analysis.arima.prepare');
-    Route::get('forecast-comparison', PerbandinganRamalanController::class)->name('forecast-comparison.index');
+    Route::get('forecast-comparison', PerbandinganPrediksiController::class)->name('forecast-comparison.index');
     foreach (['sma' => 'SMA', 'wma' => 'WMA', 'arima' => 'ARIMA', 'lightgbm' => 'LightGBM'] as $slug => $method) {
         Route::get('inventory-analysis/'.$slug, [AnalisisPersediaanController::class, 'index'])->defaults('forecast_method', $method)->name('inventory-analysis.'.$slug);
     }

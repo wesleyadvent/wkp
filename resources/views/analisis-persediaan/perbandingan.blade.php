@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">Perbandingan Akurasi Ramalan</h2>
+        <h2 class="text-xl font-semibold leading-tight text-gray-800">Perbandingan Akurasi Prediksi</h2>
         <p class="mt-1 text-sm text-gray-500">SMA, WMA, ARIMA dan LightGBM dinilai terhadap penjualan aktual pada observasi uji yang sama.</p>
     </x-slot>
 
@@ -14,7 +14,7 @@
         <div class="mx-auto max-w-screen-2xl space-y-5 sm:px-6 lg:px-8">
             <form method="GET" action="{{ route('forecast-comparison.index') }}" class="grid items-end gap-4 rounded-xl bg-white p-5 shadow-sm md:grid-cols-3 xl:grid-cols-4">
                 <div>
-                    <x-input-label for="horizon" value="Horizon ramalan" />
+                    <x-input-label for="horizon" value="Horizon prediksi" />
                     <select id="horizon" name="horizon" class="mt-1 block w-full rounded-md border-gray-300">
                         @foreach (\App\Services\ForecastComparisonService::HORIZONS as $days)
                             <option value="{{ $days }}" @selected($filters['horizon'] === $days)>{{ $days }} hari{{ in_array($days, \App\Services\ForecastComparisonService::LEAD_TIME_HORIZONS, true) ? ' · Lead time' : ' · Proyeksi' }}</option>
@@ -98,7 +98,7 @@
                         <p class="font-semibold text-emerald-900">Peringkat MAPE belum dapat ditentukan.</p>
                         <p class="mt-1 text-sm text-emerald-800">Semua aktual pada pilihan ini bernilai nol. Pilih MAE atau RMSE untuk membandingkan metode.</p>
                     @endif
-                    <p class="mt-3 text-xs text-emerald-800">Hasil berlaku untuk pilihan data ini. Semakin kecil MAE, RMSE, atau MAPE, semakin kecil galat ramalannya.</p>
+                    <p class="mt-3 text-xs text-emerald-800">Hasil berlaku untuk pilihan data ini. Semakin kecil MAE, RMSE, atau MAPE, semakin kecil galat prediksinya.</p>
                 </div>
 
                 <div class="grid gap-4 sm:grid-cols-3">
@@ -185,7 +185,7 @@
                     <p>Evaluasi historis mengikuti notebook Colab pada data transaksi <strong>sintetis</strong>. Parameter SMA/WMA, orde ARIMA dan varian LightGBM dipilih pada validasi, kemudian dinilai pada data uji Oktober 2025–Juli 2026. Jumlah kasus dan tanggal uji bergantung pada horizon agar target selesai dalam periode uji.</p>
                     <p>Semua metode memakai kelompok, tanggal potong dan aktual yang sama. MAE/RMSE hasil rekonstruksi diperiksa terhadap laporan Colab asli. Halaman membaca hasil evaluasi tersimpan, sehingga tetap dapat dibuka ketika Flask dimatikan.</p>
                     <p>Jendela SMA/WMA yang digunakan tercantum pada tabel. ARIMA mengikuti perhitungan notebook Colab; implementasi ARIMA operasional memakai batch statsmodels dengan aturan estimasi tersendiri. Peringkat ini berlaku untuk konfigurasi uji yang ditampilkan.</p>
-                    <p><strong>MAE</strong> = rata-rata |ramalan − aktual|. <strong>RMSE</strong> = akar rata-rata (ramalan − aktual)². <strong>MAPE</strong> = rata-rata |ramalan − aktual| ÷ aktual × 100%, hanya untuk aktual &gt; 0. Lihat <a class="text-amber-700 underline" href="https://otexts.com/fpp3/accuracy.html" target="_blank" rel="noopener noreferrer">rujukan pengukuran akurasi</a>.</p>
+                    <p><strong>MAE</strong> = rata-rata |prediksi − aktual|. <strong>RMSE</strong> = akar rata-rata (prediksi − aktual)². <strong>MAPE</strong> = rata-rata |prediksi − aktual| ÷ aktual × 100%, hanya untuk aktual &gt; 0. Lihat <a class="text-amber-700 underline" href="https://otexts.com/fpp3/accuracy.html" target="_blank" rel="noopener noreferrer">rujukan pengukuran akurasi</a>.</p>
                     @if ($metadata)
                         <p class="text-xs text-gray-500">Hasil dibangun {{ $metadata['generated_at'] ?? '—' }}. {{ number_format($metadata['total_rows'] ?? 0, 0, ',', '.') }} observasi tersedia untuk seluruh horizon.</p>
                     @endif

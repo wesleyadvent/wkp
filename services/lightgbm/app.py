@@ -65,7 +65,7 @@ def validate_request(payload, models):
     if payload.get("model_version") != metadata["model_version"]:
         raise InvalidInput("Versi model tidak sesuai.")
     if payload.get("forecast_use") not in metadata["forecast_uses"]:
-        raise InvalidInput("Model tidak dilatih untuk penggunaan ramalan ini.")
+        raise InvalidInput("Model tidak dilatih untuk penggunaan prediksi ini.")
     value = payload.get("as_of_date")
     if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
         raise InvalidInput("Tanggal potong harus YYYY-MM-DD.")

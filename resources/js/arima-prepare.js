@@ -23,7 +23,8 @@ if (panel) {
             }
             progress.textContent = result.busy
                 ? 'Perhitungan sedang berjalan. Halaman akan memeriksa kembali secara otomatis.'
-                : `${result.remaining} kelompok tersisa. Biarkan halaman ini terbuka; hasil akan diperbarui setelah selesai.`;
+                : `${result.remaining} kelompok tersisa. Biarkan halaman ini terbuka; 
+                hasil akan diperbarui setelah selesai.`;
             window.setTimeout(prepare, result.busy ? 2000 : 100);
         } catch (error) {
             panel.setAttribute('role', 'alert');

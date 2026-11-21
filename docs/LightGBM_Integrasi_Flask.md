@@ -1,6 +1,6 @@
 # Integrasi LightGBM Laravel dan Flask
 
-Halaman SMA, WMA, ARIMA dan LightGBM hanya menampilkan ramalan metode masing-masing. Penggantian otomatis ke SMA pada halaman ARIMA/LightGBM dinonaktifkan. Jika hasil belum tersedia, ramalan terkait kosong dengan alasan; ROP dan Siapkan ditunda bila ramalan lead time belum tersedia. Konfigurasi data demo memakai lead time bervariasi 3, 7, 14, dan 21 hari.
+Halaman SMA, WMA, ARIMA dan LightGBM hanya menampilkan prediksi metode masing-masing. Penggantian otomatis ke SMA pada halaman ARIMA/LightGBM dinonaktifkan. Jika hasil belum tersedia, prediksi terkait kosong dengan alasan; ROP dan Siapkan ditunda bila prediksi lead time belum tersedia. Konfigurasi data demo memakai lead time bervariasi 3, 7, 14, dan 21 hari.
 
 Sistem memakai tujuh PKL asli dari paket terbaru `docs/Hasil_LightGBM_ARIMA_Wijaya_Kusuma_Lead_Time_dan_Proyeksi.zip`. Model tidak dilatih ulang dalam integrasi ini. Metadata, contoh prediksi, dan laporan CSV pada ZIP terbaru menjadi acuan; panduan dan notebook di `docs` tetap menjadi referensi proses eksperimen.
 
@@ -52,9 +52,9 @@ Metadata Colab mencatat Python 3.13.18. Runtime lokal yang diuji adalah Python 3
 
 ## Pemakaian di aplikasi
 
-Buka menu **Analisis LightGBM** (`/inventory-analysis/lightgbm`). Admin memiliki **Konfigurasi LightGBM** terpisah. Migrasi menyalin konfigurasi SMA sebagai nilai awal. Lead time 3/7/14/21 hari memakai PKL masing-masing secara langsung. Jika dikonfigurasi ke horizon lain, ramalan lead time akan ditandai belum tersedia.
+Buka menu **Analisis LightGBM** (`/inventory-analysis/lightgbm`). Admin memiliki **Konfigurasi LightGBM** terpisah. Migrasi menyalin konfigurasi SMA sebagai nilai awal. Lead time 3/7/14/21 hari memakai PKL masing-masing secara langsung. Jika dikonfigurasi ke horizon lain, prediksi lead time akan ditandai belum tersedia.
 
-Tabel menampilkan ramalan selama lead time dan proyeksi sesuai jendela 30/60/90 hari. Tampilan ramalan lead time, proyeksi, dan jumlah harian dibulatkan ke unit terdekat; nilai desimal asli dipakai untuk `ROP = ceil(ramalan_lead_time + safety_stock)`. `Siapkan = max(0, ROP - stok tersedia)`. Proyeksi tidak dipakai untuk ROP. Tabel perbandingan juga menampilkan prediksi dalam unit bulat, sedangkan metrik akurasi tetap dihitung dari nilai asli. Metode halaman dan alasan ketidaktersediaan ditampilkan untuk masing-masing ramalan; versi model tersedia pada tooltip metode.
+Tabel menampilkan prediksi selama lead time dan proyeksi sesuai jendela 30/60/90 hari. Tampilan prediksi lead time, proyeksi, dan jumlah harian dibulatkan ke unit terdekat; nilai desimal asli dipakai untuk `ROP = ceil(prediksi_lead_time + safety_stock)`. `Siapkan = max(0, ROP - stok tersedia)`. Proyeksi tidak dipakai untuk ROP. Tabel perbandingan juga menampilkan prediksi dalam unit bulat, sedangkan metrik akurasi tetap dihitung dari nilai asli. Metode halaman dan alasan ketidaktersediaan ditampilkan untuk masing-masing prediksi; versi model tersedia pada tooltip metode.
 
 Setiap model hanya dipakai pada horizon dan `forecast_uses` yang dilatih. Model 30 hari bertanda `projection` tidak dialihkan menjadi model lead time 30 hari. Keempat model lead time digunakan sesuai horizon aslinya; tidak ada perkalian atau interpolasi dari model 14 hari.
 
@@ -62,9 +62,9 @@ Setiap model hanya dipakai pada horizon dan `forecast_uses` yang dilatih. Model 
 
 `LightgbmFeatureBuilder` dipakai bersama oleh inferensi dan `data:export-lightgbm`. Identitas cabang berasal dari `kode_cabang`, kategori dari nama kategori yang dinormalisasi, dan kadar harus berupa `8K`–`24K`. Pemetaan numerik berasal dari metadata, bukan ID database. `days_since_last_sale` menghitung penjualan valid terakhir sampai tanggal potong, termasuk jika lebih lama dari 180 hari. Informasi setelah tanggal potong tidak masuk fitur penjualan.
 
-Hari tutup dihitung nol; hari buka tanpa pencatatan lengkap bernilai hilang dan menunda ramalan yang memerlukan riwayat tersebut. Jadwal mendatang memakai kalender cabang yang tersimpan bila ada, atau aturan bersama `BranchCalendar`. Semua cabang tutup pada hari H Idulfitri dan buka pada H−21..H−1 serta H+1..H+21. Purwonegoro tutup Sabtu; Mandiraja dan Sumpiuh tutup Minggu; Desa buka setiap hari di luar pengecualian tersebut.
+Hari tutup dihitung nol; hari buka tanpa pencatatan lengkap bernilai hilang dan menunda prediksi yang memerlukan riwayat tersebut. Jadwal mendatang memakai kalender cabang yang tersimpan bila ada, atau aturan bersama `BranchCalendar`. Semua cabang tutup pada hari H Idulfitri dan buka pada H−21..H−1 serta H+1..H+21. Purwonegoro tutup Sabtu; Mandiraja dan Sumpiuh tutup Minggu; Desa buka setiap hari di luar pengecualian tersebut.
 
-Tanggal 2027 ditambahkan sebagai **tanggal perencanaan 10 Maret 2027**, berdasarkan [pengumuman resmi Kemnaker tanggal 15 September 2026](https://kemnaker.go.id/news/detail/pemerintah-tetapkan-18-hari-libur-nasional-dan-8-hari-cuti-bersama-tahun-2027). `EID_AVAILABLE_FROM` mencegah pemakaiannya sebelum tanggal publikasi. Seperti tanggal kalender perencanaan lainnya, perbarui bila penetapan resmi berubah. Tahun berikutnya yang belum memiliki sumber resmi menunda ramalan terkait; sistem tidak menebak Idulfitri.
+Tanggal 2027 ditambahkan sebagai **tanggal perencanaan 10 Maret 2027**, berdasarkan [pengumuman resmi Kemnaker tanggal 15 September 2026](https://kemnaker.go.id/news/detail/pemerintah-tetapkan-18-hari-libur-nasional-dan-8-hari-cuti-bersama-tahun-2027). `EID_AVAILABLE_FROM` mencegah pemakaiannya sebelum tanggal publikasi. Seperti tanggal kalender perencanaan lainnya, perbarui bila penetapan resmi berubah. Tahun berikutnya yang belum memiliki sumber resmi menunda prediksi terkait; sistem tidak menebak Idulfitri.
 
 ## Kontrak API dan cache
 
@@ -74,7 +74,7 @@ JSON rusak menghasilkan 400; kontrak tidak cocok menghasilkan 422; model belum s
 
 Laravel hanya mengirim kelompok pada cabang yang boleh diakses pengguna. Respons diperiksa untuk versi, tanggal, horizon, fungsi, cakupan, duplikasi, identitas dan nilai prediksi sebelum satu pun hasil batch disimpan. Cache menyertakan kelompok, tanggal, horizon, fungsi, metadata/versi, fitur dan hash riwayat. Isi cache diperiksa kembali saat dibaca. Perubahan input membentuk kunci baru. Hasil gagal tidak dicache sebagai prediksi berhasil.
 
-Setiap halaman menggunakan metode masing-masing. Model horizon/fungsi belum tersedia, kalender belum diketahui, kode cabang/kategori/kadar baru, riwayat 90 hari kurang lengkap, timeout, HTTP gagal, serta respons yang salah atau tidak lengkap membuat ramalan terkait ditandai belum tersedia. Hasil metode lain tidak menggantikan ramalan tersebut. ROP dan Siapkan hanya dihitung ketika ramalan lead time dari metode halaman tersedia; proyeksi yang tersedia tetap ditampilkan secara independen.
+Setiap halaman menggunakan metode masing-masing. Model horizon/fungsi belum tersedia, kalender belum diketahui, kode cabang/kategori/kadar baru, riwayat 90 hari kurang lengkap, timeout, HTTP gagal, serta respons yang salah atau tidak lengkap membuat prediksi terkait ditandai belum tersedia. Hasil metode lain tidak menggantikan prediksi tersebut. ROP dan Siapkan hanya dihitung ketika prediksi lead time dari metode halaman tersedia; proyeksi yang tersedia tetap ditampilkan secara independen.
 
 ## Ekspor dan notebook
 
@@ -108,8 +108,8 @@ Pemeriksaan data demo seluruh cabang melalui layanan nyata:
 php scripts/check_lightgbm_status.php 2026-10-31 2026-11-13
 ```
 
-Laporan tersimpan di `storage/app/private/lightgbm-status.json`, meliputi kesehatan tujuh model, jumlah kelompok yang memiliki ramalan lead time/proyeksi, distribusi lead time, dan alasan bila hasil belum tersedia.
+Laporan tersimpan di `storage/app/private/lightgbm-status.json`, meliputi kesehatan tujuh model, jumlah kelompok yang memiliki prediksi lead time/proyeksi, distribusi lead time, dan alasan bila hasil belum tersedia.
 
-Verifikasi paket terbaru: 5 tes Python dan 7 tes Laravel lulus (180 assertions Laravel), termasuk HTTP asli dan perbandingan Colab untuk 3/7/14/21 hari. Pada tanggal potong 31 Oktober serta 13 November 2026, seluruh 340 kelompok memiliki ramalan lead time, proyeksi 30/60/90, dan ROP; tidak ada kelompok yang belum tersedia.
+Verifikasi paket terbaru: 5 tes Python dan 7 tes Laravel lulus (180 assertions Laravel), termasuk HTTP asli dan perbandingan Colab untuk 3/7/14/21 hari. Pada tanggal potong 31 Oktober serta 13 November 2026, seluruh 340 kelompok memiliki prediksi lead time, proyeksi 30/60/90, dan ROP; tidak ada kelompok yang belum tersedia.
 
-Catatan verifikasi implementasi awal, sebelum penyeragaman lead time dan pemisahan hasil per metode: seluruh 89 tes Laravel lulus (1.302 assertions), termasuk tes HTTP asli Laravel–Flask; empat tes Python lulus; contoh request/response OpenAPI cocok dengan prediksi PKL; pemeriksaan format PHP dan build Vite berhasil. Pada database aplikasi dengan tanggal potong 12 November 2026, masing-masing proyeksi 30/60/90 hari berhasil memakai LightGBM untuk seluruh 340 kelompok. Sebanyak 17 kelompok memiliki lead time tepat 14 hari dan memakai LightGBM untuk ROP, sementara 323 kelompok lain memakai fallback SMA sesuai konfigurasi lead time. Contoh Anting 16K Cabang Desa, jendela 30 hari dan lead time 20 hari: ramalan lead time SMA 27,333333 unit, proyeksi LightGBM 30 hari 35,856895 unit, ROP 33 dan Siapkan 31. Ini memverifikasi alur integrasi pada data sintetis aplikasi, bukan evaluasi akurasi transaksi riil.
+Catatan verifikasi implementasi awal, sebelum penyeragaman lead time dan pemisahan hasil per metode: seluruh 89 tes Laravel lulus (1.302 assertions), termasuk tes HTTP asli Laravel–Flask; empat tes Python lulus; contoh request/response OpenAPI cocok dengan prediksi PKL; pemeriksaan format PHP dan build Vite berhasil. Pada database aplikasi dengan tanggal potong 12 November 2026, masing-masing proyeksi 30/60/90 hari berhasil memakai LightGBM untuk seluruh 340 kelompok. Sebanyak 17 kelompok memiliki lead time tepat 14 hari dan memakai LightGBM untuk ROP, sementara 323 kelompok lain memakai fallback SMA sesuai konfigurasi lead time. Contoh Anting 16K Cabang Desa, jendela 30 hari dan lead time 20 hari: prediksi lead time SMA 27,333333 unit, proyeksi LightGBM 30 hari 35,856895 unit, ROP 33 dan Siapkan 31. Ini memverifikasi alur integrasi pada data sintetis aplikasi, bukan evaluasi akurasi transaksi riil.

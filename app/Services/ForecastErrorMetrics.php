@@ -19,7 +19,7 @@ class ForecastErrorMetrics
     public function add(float $actual, float $predicted): void
     {
         if (! is_finite($actual) || ! is_finite($predicted) || $actual < 0 || $predicted < 0) {
-            throw new InvalidArgumentException('Nilai aktual dan ramalan harus finite dan nonnegatif.');
+            throw new InvalidArgumentException('Nilai aktual dan prediksi harus finite dan nonnegatif.');
         }
         $error = abs($predicted - $actual);
         $this->count++;

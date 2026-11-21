@@ -9,9 +9,9 @@ $example = null; $violations = 0;
 while (($row = fgetcsv($f)) !== false) {
     $r = array_combine($header, $row);
     if ($r['split'] === 'latih' && $r['akhir_target'] > '2024-12-31') $violations++;
-    if ($r['split'] === 'validasi' && ($r['tanggal_ramalan'] < '2025-01-01' || $r['akhir_target'] > '2025-09-30')) $violations++;
-    if ($r['split'] === 'uji' && ($r['tanggal_ramalan'] < '2025-10-01' || $r['akhir_target'] > '2026-07-31')) $violations++;
-    if ($r['tanggal_ramalan'] === '2026-03-14' && $r['kode_cabang'] === 'PWG' && $r['kategori'] === 'Anting' && $r['kadar'] === '16K') $example = $r;
+    if ($r['split'] === 'validasi' && ($r['tanggal_prediksi'] < '2025-01-01' || $r['akhir_target'] > '2025-09-30')) $violations++;
+    if ($r['split'] === 'uji' && ($r['tanggal_prediksi'] < '2025-10-01' || $r['akhir_target'] > '2026-07-31')) $violations++;
+    if ($r['tanggal_prediksi'] === '2026-03-14' && $r['kode_cabang'] === 'PWG' && $r['kategori'] === 'Anting' && $r['kadar'] === '16K') $example = $r;
 }
 fclose($f);
 $actual = DB::table('item_penjualan as i')->join('penjualan as s','s.id','=','i.sale_id')->join('barang as b','b.id','=','i.product_id')->join('kategori_barang as c','c.id','=','b.kategori_barang_id')->join('cabang as cab','cab.id','=','s.branch_id')->where('cab.kode_cabang','PWG')->where('c.nama_kategori','Anting')->where('b.kadar','16K')->where('s.status','valid')->whereBetween('s.tanggal',['2026-03-15','2026-03-28'])->count();

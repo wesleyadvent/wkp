@@ -9,7 +9,7 @@
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
      <?php $__env->slot('header', null, []); ?> 
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">Perbandingan Akurasi Ramalan</h2>
+        <h2 class="text-xl font-semibold leading-tight text-gray-800">Perbandingan Akurasi Prediksi</h2>
         <p class="mt-1 text-sm text-gray-500">SMA, WMA, ARIMA dan LightGBM dinilai terhadap penjualan aktual pada observasi uji yang sama.</p>
      <?php $__env->endSlot(); ?>
 
@@ -25,14 +25,14 @@
                 <div>
                     <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => '92edfda80dc3faed2cda654b45151250::input-label','data' => ['for' => 'horizon','value' => 'Horizon ramalan']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => '92edfda80dc3faed2cda654b45151250::input-label','data' => ['for' => 'horizon','value' => 'Horizon prediksi']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input-label'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['for' => 'horizon','value' => 'Horizon ramalan']); ?>
+<?php $component->withAttributes(['for' => 'horizon','value' => 'Horizon prediksi']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
@@ -334,7 +334,7 @@
                         <p class="font-semibold text-emerald-900">Peringkat MAPE belum dapat ditentukan.</p>
                         <p class="mt-1 text-sm text-emerald-800">Semua aktual pada pilihan ini bernilai nol. Pilih MAE atau RMSE untuk membandingkan metode.</p>
                     <?php endif; ?>
-                    <p class="mt-3 text-xs text-emerald-800">Hasil berlaku untuk pilihan data ini. Semakin kecil MAE, RMSE, atau MAPE, semakin kecil galat ramalannya.</p>
+                    <p class="mt-3 text-xs text-emerald-800">Hasil berlaku untuk pilihan data ini. Semakin kecil MAE, RMSE, atau MAPE, semakin kecil galat prediksinya.</p>
                 </div>
 
                 <div class="grid gap-4 sm:grid-cols-3">
@@ -421,7 +421,7 @@
                     <p>Evaluasi historis mengikuti notebook Colab pada data transaksi <strong>sintetis</strong>. Parameter SMA/WMA, orde ARIMA dan varian LightGBM dipilih pada validasi, kemudian dinilai pada data uji Oktober 2025–Juli 2026. Jumlah kasus dan tanggal uji bergantung pada horizon agar target selesai dalam periode uji.</p>
                     <p>Semua metode memakai kelompok, tanggal potong dan aktual yang sama. MAE/RMSE hasil rekonstruksi diperiksa terhadap laporan Colab asli. Halaman membaca hasil evaluasi tersimpan, sehingga tetap dapat dibuka ketika Flask dimatikan.</p>
                     <p>Jendela SMA/WMA yang digunakan tercantum pada tabel. ARIMA mengikuti perhitungan notebook Colab; implementasi ARIMA operasional memakai batch statsmodels dengan aturan estimasi tersendiri. Peringkat ini berlaku untuk konfigurasi uji yang ditampilkan.</p>
-                    <p><strong>MAE</strong> = rata-rata |ramalan − aktual|. <strong>RMSE</strong> = akar rata-rata (ramalan − aktual)². <strong>MAPE</strong> = rata-rata |ramalan − aktual| ÷ aktual × 100%, hanya untuk aktual &gt; 0. Lihat <a class="text-amber-700 underline" href="https://otexts.com/fpp3/accuracy.html" target="_blank" rel="noopener noreferrer">rujukan pengukuran akurasi</a>.</p>
+                    <p><strong>MAE</strong> = rata-rata |prediksi − aktual|. <strong>RMSE</strong> = akar rata-rata (prediksi − aktual)². <strong>MAPE</strong> = rata-rata |prediksi − aktual| ÷ aktual × 100%, hanya untuk aktual &gt; 0. Lihat <a class="text-amber-700 underline" href="https://otexts.com/fpp3/accuracy.html" target="_blank" rel="noopener noreferrer">rujukan pengukuran akurasi</a>.</p>
                     <?php if($metadata): ?>
                         <p class="text-xs text-gray-500">Hasil dibangun <?php echo e($metadata['generated_at'] ?? '—'); ?>. <?php echo e(number_format($metadata['total_rows'] ?? 0, 0, ',', '.')); ?> observasi tersedia untuk seluruh horizon.</p>
                     <?php endif; ?>

@@ -54,7 +54,7 @@ class GoldPriceHistoryTest extends TestCase
             $rows = [];
             while (($line = fgetcsv($file)) !== false) {
                 $row = array_combine($header, $line);
-                if ($row['kadar'] === '18K') $rows[$row['tanggal_ramalan']] = $row;
+                if ($row['kadar'] === '18K') $rows[$row['tanggal_prediksi']] = $row;
             }
             fclose($file);
             $this->assertEquals(2000000, $rows['2023-01-02']['harga_toko_per_gram']);

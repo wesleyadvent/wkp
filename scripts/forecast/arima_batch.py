@@ -8,7 +8,10 @@ import os
 
 os.environ.setdefault('OPENBLAS_NUM_THREADS', '1')
 os.environ.setdefault('OMP_NUM_THREADS', '1')
-ORDERS = [(p, d, q) for p in range(3) for d in range(2) for q in range(3) if p + q <= 3]
+ORDERS = [(p, d, q) 
+          for p in range(3) 
+          for d in range(2) 
+          for q in range(3) if p + q <= 3]
 
 def fit_group(group):
     from statsmodels.tsa.arima.model import ARIMA
@@ -16,7 +19,9 @@ def fit_group(group):
     values = group['values']
     last_missing = max((i for i, y in enumerate(values) if y is None), default=-1)
     values = values[last_missing + 1:]
-    result = {'key': group['key'], 'cutoff': group['cutoff'], 'horizon': group['horizon'], 'input_hash': group['input_hash'], 'status': 'unavailable', 'total': None, 'history_days': len(values), 'library_version': statsmodels.__version__}
+    result = {'key': group['key'], 'cutoff': group['cutoff'], 'horizon': group['horizon'], 
+              'input_hash': group['input_hash'], 'status': 'unavailable', 'total': None, 
+              'history_days': len(values), 'library_version': statsmodels.__version__}
     if len(values) < 90 or sum(y > 0 for y in values) < 14:
         return dict(result, reason='Riwayat lengkap <90 hari atau hari penjualan positif <14.')
     if len(set(values)) == 1:

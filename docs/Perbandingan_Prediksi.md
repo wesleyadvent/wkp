@@ -1,6 +1,6 @@
-# Perbandingan akurasi ramalan
+# Perbandingan akurasi prediksi
 
-Menu **Perbandingan Ramalan** tersedia di `/forecast-comparison` untuk pengguna yang sudah login. Admin dapat membatasi cabang atau menilai seluruh cabang. Pengguna cabang selalu dibatasi ke cabangnya sendiri, termasuk ketika parameter URL diubah.
+Menu **Perbandingan Prediksi** tersedia di `/forecast-comparison` untuk pengguna yang sudah login. Admin dapat membatasi cabang atau menilai seluruh cabang. Pengguna cabang selalu dibatasi ke cabangnya sendiri, termasuk ketika parameter URL diubah.
 
 Halaman membandingkan SMA, WMA, ARIMA dan LightGBM menggunakan MAE, RMSE dan MAPE. Pengguna dapat memilih lead time 3/7/14/21 hari atau proyeksi 30/60/90 hari, kategori, kadar, tanggal potong, pencarian kelompok dan metrik pengurutan. Peringkat dan ketiga metrik dihitung ulang pada observasi hasil filter yang sama untuk semua metode. Nilai lebih rendah menunjukkan galat lebih kecil. Nilai seri berbagi peringkat; halaman tidak memaksakan satu pemenang.
 
@@ -51,4 +51,4 @@ php vendor/bin/phpunit tests/Unit/ForecastErrorMetricsTest.php tests/Feature/For
 .\.venv-lightgbm\Scripts\python.exe -m unittest discover -s scripts/forecast -p test_comparison.py -v
 ```
 
-Pengujian mencakup hitungan metrik, aktual nol, data kosong, peringkat seri, filter/paginasi, kelompok tanpa prediksi lengkap, integritas berkas, login dan isolasi cabang. Uji Python mengubah aktual setelah tanggal potong dan memastikan fitur serta ramalan SMA/WMA/ARIMA tidak ikut berubah, sementara target berubah sebagaimana mestinya.
+Pengujian mencakup hitungan metrik, aktual nol, data kosong, peringkat seri, filter/paginasi, kelompok tanpa prediksi lengkap, integritas berkas, login dan isolasi cabang. Uji Python mengubah aktual setelah tanggal potong dan memastikan fitur serta prediksi SMA/WMA/ARIMA tidak ikut berubah, sementara target berubah sebagaimana mestinya.

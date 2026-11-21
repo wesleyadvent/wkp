@@ -88,7 +88,8 @@ class LightgbmForecastService
                     foreach ($data['predictions'] as $prediction) {
                         $key = $prediction['group_key'] ?? null;
                         $units = $prediction['predicted_units'] ?? null;
-                        if (! is_string($key) || ! isset($groups[$key]) || isset($predictions[$key]) || ! $this->validUnits($units)) {
+                        if (! is_string($key) || ! isset($groups[$key]) || isset($predictions[$key]) 
+                            || ! $this->validUnits($units)) {
                             throw new RuntimeException('Kelompok atau nilai prediksi LightGBM tidak valid.');
                         }
                         $predictions[$key] = $units;

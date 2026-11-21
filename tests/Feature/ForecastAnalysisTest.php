@@ -65,18 +65,18 @@ class ForecastAnalysisTest extends TestCase
         $service = app(InventoryAnalysisService::class);
         $pending = $service->analyze($b->id, 30, $end, 'ARIMA')->first();
         $this->assertNull($pending['metode_efektif']);
-        $this->assertNull($pending['ramalan_unit']);
+        $this->assertNull($pending['prediksi_unit']);
         $this->assertNull($pending['rop']);
         $this->assertNull($pending['jumlah_perlu_disiapkan']);
-        $this->assertSame('ramalan_belum_tersedia', $pending['status_persediaan']);
+        $this->assertSame('prediksi_belum_tersedia', $pending['status_persediaan']);
         $g = array_values(app(DailySalesSeries::class)->groups($b->id, $end))[0];
         DB::table('inventory_forecasts')->insert(['branch_id' => $b->id, 'category_id' => $c->id, 'kadar' => '18K', 'cutoff' => $end->toDateString(), 'horizon' => 14, 'method' => 'ARIMA', 'version' => config('forecast.version'), 'input_hash' => $g['input_hash'], 'status' => 'ok', 'total' => 7.2, 'details' => json_encode(['history_days' => 180]), 'created_at' => now(), 'updated_at' => now()]);
         $row = $service->analyze($b->id, 30, $end, 'ARIMA')->first();
         $this->assertSame('ARIMA', $row['metode_efektif']);
         $this->assertSame(10, $row['rop']);
-        $this->assertEquals(7.2, $row['ramalan_unit']);
+        $this->assertEquals(7.2, $row['prediksi_unit']);
         $this->assertNull($row['metode_efektif_periode']);
-        $this->assertNull($row['ramalan_unit_periode']);
+        $this->assertNull($row['prediksi_unit_periode']);
         $this->assertNotNull($row['alasan_fallback_periode']);
         DB::table('inventory_forecasts')->update(['horizon' => 21]);
         $this->assertNull($service->analyze($b->id, 30, $end, 'ARIMA')->first()['metode_efektif']);
@@ -100,8 +100,8 @@ class ForecastAnalysisTest extends TestCase
         foreach ([30 => 465, 60 => 1830, 90 => 4095] as $period => $expected) {
             $row = $service->analyze($b->id, $period, $end, 'ARIMA')->first();
             $this->assertSame('ARIMA', $row['metode_efektif_periode']);
-            $this->assertEquals($expected, $row['ramalan_unit_periode']);
-            $this->assertEquals(105, $row['ramalan_unit']);
+            $this->assertEquals($expected, $row['prediksi_unit_periode']);
+            $this->assertEquals(105, $row['prediksi_unit']);
             $this->assertSame(107, $row['rop']);
             $this->assertNull($row['alasan_fallback_periode']);
         }
@@ -109,13 +109,13 @@ class ForecastAnalysisTest extends TestCase
         $row = $service->analyze($b->id, 30, $end, 'ARIMA')->first();
         $this->assertSame('ARIMA', $row['metode_efektif']);
         $this->assertNull($row['metode_efektif_periode']);
-        $this->assertNull($row['ramalan_unit_periode']);
+        $this->assertNull($row['prediksi_unit_periode']);
         $this->assertSame(107, $row['rop']);
         DB::table('kalender_cabang')->where('tanggal', $end->toDateString())->update(['pencatatan_lengkap' => null]);
         $row = $service->analyze($b->id, 30, $end, 'WMA')->first();
         $this->assertNull($row['rop']);
-        $this->assertNull($row['ramalan_unit']);
-        $this->assertNull($row['ramalan_unit_periode']);
+        $this->assertNull($row['prediksi_unit']);
+        $this->assertNull($row['prediksi_unit_periode']);
         $other = Cabang::create(['kode_cabang' => 'MDR', 'nama_cabang' => 'Mandiraja']);
         $operator = Pengguna::factory()->create(['role' => 'toko_cabang', 'branch_id' => $b->id]);
         $this->actingAs($operator)->get(route('inventory-analysis.index', ['metode' => 'ARIMA', 'branch_id' => $other->id, 'cutoff' => $end->toDateString()]))->assertOk()->assertViewHas('rows', fn ($rows) => $rows->getCollection()->every(fn ($r) => $r['branch_id'] === $b->id));

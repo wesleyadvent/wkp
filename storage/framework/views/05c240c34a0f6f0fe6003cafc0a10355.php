@@ -1,0 +1,40 @@
+<?php $attributes ??= new \Illuminate\View\ComponentAttributeBag;
+
+$__newAttributes = [];
+$__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames((['value', 'label' => null]));
+
+foreach ($attributes->all() as $__key => $__value) {
+    if (in_array($__key, $__propNames)) {
+        $$__key = $$__key ?? $__value;
+    } else {
+        $__newAttributes[$__key] = $__value;
+    }
+}
+
+$attributes = new \Illuminate\View\ComponentAttributeBag($__newAttributes);
+
+unset($__propNames);
+unset($__newAttributes);
+
+foreach (array_filter((['value', 'label' => null]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
+    $$__key = $$__key ?? $__value;
+}
+
+$__defined_vars = get_defined_vars();
+
+foreach ($attributes->all() as $__key => $__value) {
+    if (array_key_exists($__key, $__defined_vars)) unset($$__key);
+}
+
+unset($__defined_vars, $__key, $__value); ?>
+<?php
+    $key = is_bool($value) ? ($value ? 'aktif' : 'nonaktif') : strtolower((string) $value);
+    $tone = match ($key) {
+        'aktif', 'active', 'valid', 'tersedia', 'selesai', 'sudah_diambil' => 'success',
+        'batal', 'cancelled', 'nonaktif', 'inactive', 'arsip' => 'muted',
+        'service', 'diproses', 'proses', 'dikerjakan' => 'warning',
+        default => 'info',
+    };
+?>
+<span class="status-badge status-badge-<?php echo e($tone); ?>"><?php echo e($label ?? ucfirst(str_replace('_', ' ', $key))); ?></span>
+<?php /**PATH D:\project\toko-emas-wijaya-kusuma\resources\views\komponen\status-badge.blade.php ENDPATH**/ ?>

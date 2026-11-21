@@ -30,7 +30,7 @@
         ];
         $stockBadges = [
             'data_belum_lengkap' => 'bg-slate-100 text-slate-700',
-            'ramalan_belum_tersedia' => 'bg-slate-100 text-slate-700',
+            'prediksi_belum_tersedia' => 'bg-slate-100 text-slate-700',
             'aman' => 'bg-emerald-100 text-emerald-800',
             'perlu_perhatian' => 'bg-amber-100 text-amber-800',
             'kritis' => 'bg-rose-100 text-rose-800',
@@ -156,14 +156,14 @@
                 <div>
                     <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => '92edfda80dc3faed2cda654b45151250::input-label','data' => ['for' => 'periode','value' => 'Jendela analisis &amp; ramalan']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => '92edfda80dc3faed2cda654b45151250::input-label','data' => ['for' => 'periode','value' => 'Jendela analisis dan prediksi']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input-label'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['for' => 'periode','value' => 'Jendela analisis &amp; ramalan']); ?>
+<?php $component->withAttributes(['for' => 'periode','value' => 'Jendela analisis dan prediksi']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
@@ -304,14 +304,14 @@
                             <p>Jalankan perintah berikut dari folder proyek dan biarkan terminal tetap terbuka:</p>
                             <code class="block overflow-x-auto rounded bg-white p-2">.\.venv-lightgbm\Scripts\python.exe services\lightgbm\serve.py</code>
                         <?php endif; ?>
-                        <p>Ramalan, ROP, dan jumlah yang perlu disiapkan belum dapat dihitung sampai layanan siap.</p>
+                        <p>Prediksi, ROP, dan jumlah yang perlu disiapkan belum dapat dihitung sampai layanan siap.</p>
                     </div>
                 <?php endif; ?>
-                <p class="rounded border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900">Model LightGBM ini dilatih dengan transaksi sintetis. Model lead time tersedia untuk 3, 7, 14, dan 21 hari; proyeksi memakai model tersendiri untuk 30, 60, atau 90 hari. Jika model atau data belum mendukung, ramalan terkait ditandai belum tersedia beserta alasannya.</p>
+                <p class="rounded border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900">Model LightGBM ini dilatih dengan transaksi sintetis. Model lead time tersedia untuk 3, 7, 14, dan 21 hari; proyeksi memakai model tersendiri untuk 30, 60, atau 90 hari. Jika model atau data belum mendukung, prediksi terkait ditandai belum tersedia beserta alasannya.</p>
             <?php endif; ?>
 
-            <?php if($summary['belum_lengkap']): ?><p class="rounded border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"><?php echo e($summary['belum_lengkap']); ?> kelompok belum memiliki pencatatan lengkap pada tanggal potong ini. Ramalan dan ROP ditunda; pilih tanggal dengan pencatatan lengkap atau konfirmasikan pencatatannya terlebih dahulu.</p><?php endif; ?>
-            <?php if($summary['ramalan_belum_tersedia'] && ! ($lightgbmStatus && $lightgbmStatus['state'] !== 'ready')): ?><p class="rounded border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"><?php echo e($summary['ramalan_belum_tersedia']); ?> kelompok memiliki ramalan <?php echo e($metode); ?> yang belum tersedia. Periksa keterangan pada tabel. ROP dan jumlah yang perlu disiapkan hanya dihitung jika ramalan lead time <?php echo e($metode); ?> tersedia.</p><?php endif; ?>
+            <?php if($summary['belum_lengkap']): ?><p class="rounded border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"><?php echo e($summary['belum_lengkap']); ?> kelompok belum memiliki pencatatan lengkap pada tanggal potong ini. Prediksi dan ROP ditunda; pilih tanggal dengan pencatatan lengkap atau konfirmasikan pencatatannya terlebih dahulu.</p><?php endif; ?>
+            <?php if($summary['prediksi_belum_tersedia'] && ! ($lightgbmStatus && $lightgbmStatus['state'] !== 'ready')): ?><p class="rounded border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"><?php echo e($summary['prediksi_belum_tersedia']); ?> kelompok memiliki prediksi <?php echo e($metode); ?> yang belum tersedia. Periksa keterangan pada tabel. ROP dan jumlah yang perlu disiapkan hanya dihitung jika prediksi lead time <?php echo e($metode); ?> tersedia.</p><?php endif; ?>
             <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <div class="rounded-xl border border-emerald-100 bg-white p-5 shadow-sm"><p class="text-sm font-medium text-slate-500">Kelompok aman</p><p class="mt-2 text-3xl font-bold text-emerald-700"><?php echo e($summary['aman']); ?></p></div>
                 <div class="rounded-xl border border-amber-100 bg-white p-5 shadow-sm"><p class="text-sm font-medium text-slate-500">Perlu perhatian</p><p class="mt-2 text-3xl font-bold text-amber-700"><?php echo e($summary['perlu_perhatian']); ?></p></div>
@@ -331,7 +331,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-5 py-4">
                     <div>
                         <h3 class="font-semibold text-gray-900">Hasil analisis <?php echo e($periode); ?> hari</h3>
-                        <p class="mt-1 text-xs text-gray-500">Tanggal potong <?php echo e($cutoff); ?>. Ramalan lead time memperkirakan penjualan selama menunggu barang datang; ramalan jendela untuk <?php echo e($periode); ?> hari ke depan. Ramalan ditampilkan dalam unit bulat terdekat. ROP = pembulatan ke atas (ramalan lead time + safety stock).</p>
+                        <p class="mt-1 text-xs text-gray-500">Tanggal potong <?php echo e($cutoff); ?>. Prediksi lead time memperkirakan penjualan selama menunggu barang datang; prediksi jendela untuk <?php echo e($periode); ?> hari ke depan. Prediksi ditampilkan dalam unit bulat terdekat. ROP = pembulatan ke atas (prediksi lead time + safety stock).</p>
                         <p class="mt-1 text-xs text-gray-500">Tren memakai <?php echo e($periode); ?> hari terakhir. <?php echo e($metode === 'LightGBM' ? 'LightGBM memakai riwayat 90 hari, jadwal buka dan Idulfitri.' : ($metode === 'ARIMA' ? 'ARIMA memakai hasil batch dengan tanggal potong, horizon dan riwayat yang sesuai.' : $metode.' memakai riwayat sesuai jendela yang dipilih.')); ?></p>
                     </div>
                     <span class="text-sm text-gray-500"><?php echo e(number_format($totalRows, 0, ',', '.')); ?> kelompok</span>
@@ -385,14 +385,14 @@
                                     </td>
                                     <td>
                                         <dl class="inventory-metrics">
-                                            <div><dt>Ramalan lead time (<?php echo e($row['lead_time_hari']); ?> hari)</dt><dd><?php echo e($row['ramalan_unit'] === null ? 'Belum tersedia' : number_format($row['ramalan_unit'], 0, ',', '.').' unit'); ?></dd></div>
+                                            <div><dt>Prediksi lead time (<?php echo e($row['lead_time_hari']); ?> hari)</dt><dd><?php echo e($row['prediksi_unit'] === null ? 'Belum tersedia' : number_format($row['prediksi_unit'], 0, ',', '.').' unit'); ?></dd></div>
                                             <div><dt>Metode</dt><dd title="<?php echo e($row['versi_model'] ?? ''); ?>"><?php echo e($metode); ?></dd></div>
                                         </dl>
                                         <span class="inventory-secondary">Riwayat <?php echo e($row['riwayat_mulai']); ?> s.d. <?php echo e($row['riwayat_akhir']); ?></span>
                                         <?php if($row['alasan_fallback']): ?><span class="inventory-secondary">Diminta <?php echo e($row['metode_diminta']); ?>: <?php echo e($row['alasan_fallback']); ?></span><?php endif; ?>
                                         <div class="mt-3">
                                             <dl class="inventory-metrics">
-                                                <div><dt>Ramalan jendela (<?php echo e($periode); ?> hari)</dt><dd><?php echo e($row['ramalan_unit_periode'] === null ? 'Belum tersedia' : number_format($row['ramalan_unit_periode'], 0, ',', '.').' unit'); ?></dd></div>
+                                                <div><dt>Prediksi jendela (<?php echo e($periode); ?> hari)</dt><dd><?php echo e($row['prediksi_unit_periode'] === null ? 'Belum tersedia' : number_format($row['prediksi_unit_periode'], 0, ',', '.').' unit'); ?></dd></div>
                                                 <div><dt>Metode</dt><dd title="<?php echo e($row['versi_model_periode'] ?? ''); ?>"><?php echo e($metode); ?></dd></div>
                                             </dl>
                                             <?php if($row['riwayat_mulai_periode'] !== $row['riwayat_mulai']): ?><span class="inventory-secondary">Riwayat <?php echo e($row['riwayat_mulai_periode']); ?> s.d. <?php echo e($row['riwayat_akhir']); ?></span><?php endif; ?>

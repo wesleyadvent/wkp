@@ -25,7 +25,7 @@ class BuildArimaForecasts extends Command
 
             return self::FAILURE;
         }
-        $this->info('Batch tersimpan: '.count($groups).' kelompok, '.count($forecasts).' ramalan; berhasil '.collect($forecasts)->where('result.status', 'ok')->count().'.');
+        $this->info('Batch tersimpan: '.count($groups).' kelompok, '.count($forecasts).' prediksi; berhasil '.collect($forecasts)->where('result.status', 'ok')->count().'.');
 
         return self::SUCCESS;
     }

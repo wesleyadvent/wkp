@@ -25,9 +25,11 @@ def install(archive=DEFAULT_ARCHIVE, destination=None):
         fixture.parent.mkdir(parents=True, exist_ok=True)
         fixture.write_bytes(source.read("contoh_prediksi_lead_time.json"))
         examples = csv.DictReader(io.StringIO(source.read("Contoh_Prediksi_Uji.csv").decode("utf-8")))
+        # The source archive may use a different label for the prediction date.
+        date_column = next(name for name in examples.fieldnames if name.startswith('tanggal_'))
         predictions = {row['horizon_hari']: float(row['prediksi_lightgbm']) for row in examples
                        if row['kode_cabang'] == 'DSA' and row['kategori'] == 'ANTING'
-                       and row['kadar'] == '8' and row['tanggal_ramalan'] == '2025-10-01'}
+                       and row['kadar'] == '8' and row[date_column] == '2025-10-01'}
         (fixture.parent / "colab_projection_units.json").write_text(json.dumps(predictions, indent=2) + "\n", encoding="utf-8")
     (destination / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest

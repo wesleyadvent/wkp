@@ -39,7 +39,7 @@
                     ['label' => 'Analisis WMA', 'route' => 'inventory-analysis.wma', 'active' => 'inventory-analysis.wma', 'icon' => 'trend'],
                     ['label' => 'Analisis ARIMA', 'route' => 'inventory-analysis.arima', 'active' => 'inventory-analysis.arima', 'icon' => 'trend'],
                     ['label' => 'Analisis LightGBM', 'route' => 'inventory-analysis.lightgbm', 'active' => 'inventory-analysis.lightgbm', 'icon' => 'trend'],
-                    ['label' => 'Perbandingan Ramalan', 'route' => 'forecast-comparison.index', 'active' => 'forecast-comparison.*', 'icon' => 'chart'],
+                    ['label' => 'Perbandingan Prediksi', 'route' => 'forecast-comparison.index', 'active' => 'forecast-comparison.*', 'icon' => 'chart'],
                 ],
             ];
 

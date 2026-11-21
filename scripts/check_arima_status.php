@@ -23,14 +23,14 @@ foreach ($cutoffs as $cutoff) {
         $rows = app(InventoryAnalysisService::class)->analyze(null, $period, $end, 'ARIMA');
         $entry['windows'][$period] = [
             'groups' => $rows->count(),
-            'lead_time_available' => $rows->filter(fn ($row) => $row['ramalan_unit'] !== null)->count(),
-            'window_available' => $rows->filter(fn ($row) => $row['ramalan_unit_periode'] !== null)->count(),
+            'lead_time_available' => $rows->filter(fn ($row) => $row['prediksi_unit'] !== null)->count(),
+            'window_available' => $rows->filter(fn ($row) => $row['prediksi_unit_periode'] !== null)->count(),
             'missing_batch' => $rows->filter(fn ($row) => str_contains($row['alasan_fallback'] ?? '', 'Batch sesuai tanggal potong dan horizon belum tersedia'))->count(),
             'safety_stock_configured' => $rows->filter(fn ($row) => ! $row['menggunakan_konfigurasi_default'] && $row['safety_stock'] !== null)->count(),
-            'unavailable_reasons' => $rows->filter(fn ($row) => $row['ramalan_unit'] === null)->countBy('alasan_fallback')->all(),
+            'unavailable_reasons' => $rows->filter(fn ($row) => $row['prediksi_unit'] === null)->countBy('alasan_fallback')->all(),
         ];
         if ($period === 30) {
-            $entry['unavailable_groups'] = $rows->filter(fn ($row) => $row['ramalan_unit'] === null)->map(fn ($row) => array_intersect_key($row, array_flip(['cabang', 'kategori', 'kadar', 'alasan_fallback'])))->values()->all();
+            $entry['unavailable_groups'] = $rows->filter(fn ($row) => $row['prediksi_unit'] === null)->map(fn ($row) => array_intersect_key($row, array_flip(['cabang', 'kategori', 'kadar', 'alasan_fallback'])))->values()->all();
         }
     }
     $report['cutoffs'][] = $entry;

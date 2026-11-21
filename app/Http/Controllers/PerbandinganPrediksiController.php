@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use RuntimeException;
 
-class PerbandinganRamalanController extends Controller
+class PerbandinganPrediksiController extends Controller
 {
     public function __invoke(Request $request, ForecastComparisonService $comparison): View
     {

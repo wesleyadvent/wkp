@@ -97,7 +97,7 @@ foreach ($groups as $group) {
 $report['complete_sales_series'] = count($groups);
 foreach (['SMA', 'WMA'] as $method) {
     $analysis = app(InventoryAnalysisService::class)->analyze(null, 30, $end, $method);
-    $check($analysis->count() === 340 && $analysis->every(fn ($row) => $row['ramalan_unit'] !== null && ! $row['menggunakan_konfigurasi_default']), 'Analysis not ready: '.$method);
+    $check($analysis->count() === 340 && $analysis->every(fn ($row) => $row['prediksi_unit'] !== null && ! $row['menggunakan_konfigurasi_default']), 'Analysis not ready: '.$method);
     $report['analysis'][$method] = $analysis->countBy('status_persediaan')->all();
 }
 $builder = app(LightgbmFeatureBuilder::class);

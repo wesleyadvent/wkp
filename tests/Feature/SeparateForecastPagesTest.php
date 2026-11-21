@@ -41,8 +41,8 @@ class SeparateForecastPagesTest extends TestCase
                 $response->assertDontSee('SMA/hari')->assertDontSee('fallback SMA');
             }
             if ($method === 'ARIMA') {
-                $response->assertSee('Belum tersedia')->assertSee('Ramalan belum tersedia')
-                    ->assertViewHas('summary', fn ($summary) => $summary['ramalan_belum_tersedia'] === 1 && $summary['belum_lengkap'] === 0);
+                $response->assertSee('Belum tersedia')->assertSee('Prediksi belum tersedia')
+                    ->assertViewHas('summary', fn ($summary) => $summary['prediksi_belum_tersedia'] === 1 && $summary['belum_lengkap'] === 0);
             }
             $this->get(route('inventory-settings.'.$slug.'.index'))->assertOk()->assertViewHas('metode', $method);
             $this->get(route('inventory-settings.'.$slug.'.edit', $base))->assertOk()->assertSee(route('inventory-settings.'.$slug.'.store'), false);

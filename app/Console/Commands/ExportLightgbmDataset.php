@@ -45,7 +45,7 @@ class ExportLightgbmDataset extends Command
             $known[$key] = min($known[$key] ?? '9999-12-31', substr($row->first_date, 0, 10));
         }
         $header = ['schema_version', 'as_of_date', 'target_end_date', 'group_key', ...$metadata['feature_names'], 'target_sales_'.$horizon.'d', 'feature_error',
-            'tanggal_ramalan', 'kode_cabang', 'kategori', 'kadar', 'penjualan_hari_ini', 'harga_antam', 'perubahan_harga_7_persen', 'tanggal_sumber_harga', 'sumber_harga'];
+            'tanggal_prediksi', 'kode_cabang', 'kategori', 'kadar', 'penjualan_hari_ini', 'harga_antam', 'perubahan_harga_7_persen', 'tanggal_sumber_harga', 'sumber_harga'];
         fputcsv($handle, $header, escape: '');
         $count = $missing = 0;
         try {
@@ -72,7 +72,7 @@ class ExportLightgbmDataset extends Command
                     $target = count($actual) === $horizon && ! in_array(null, $actual, true) ? array_sum($actual) : null;
                     $row = ['schema_version' => $metadata['schema_version'], 'as_of_date' => $end->toDateString(), 'target_end_date' => $targetEnd->toDateString(), 'group_key' => $g['key'], ...$features,
                         'target_sales_'.$horizon.'d' => $target, 'feature_error' => $error,
-                        'tanggal_ramalan' => $end->toDateString(), 'kode_cabang' => $context['branch_codes'][$g['branch_id']], 'kategori' => mb_strtoupper($g['kategori']), 'kadar' => $g['kadar'], 'penjualan_hari_ini' => $g['values'][array_key_last($g['values'])],
+                        'tanggal_prediksi' => $end->toDateString(), 'kode_cabang' => $context['branch_codes'][$g['branch_id']], 'kategori' => mb_strtoupper($g['kategori']), 'kadar' => $g['kadar'], 'penjualan_hari_ini' => $g['values'][array_key_last($g['values'])],
                         'harga_antam' => $price?->harga, 'perubahan_harga_7_persen' => $price && $old && $old->harga > 0 ? 100 * ($price->harga / $old->harga - 1) : null, 'tanggal_sumber_harga' => $price?->tanggal_sumber, 'sumber_harga' => $price?->sumber];
                     fputcsv($handle, array_map(fn ($name) => $row[$name] ?? null, $header), escape: '');
                     $count++;

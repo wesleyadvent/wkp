@@ -28,7 +28,8 @@ class ArimaForecastBuilder
             ->where('cutoff', $end->toDateString())->when($branch, fn ($q) => $q->where('branch_id', $branch))->get()
             ->keyBy(fn ($r) => DailySalesSeries::key($r->branch_id, $r->category_id, $r->kadar).'|'.$r->horizon);
 
-        return array_values(array_filter($this->groups($branch, $end), function ($group) use ($cached) {
+        return array_values(array_filter($this->groups($branch, $end), 
+        function ($group) use ($cached) {
             foreach ($group['horizons'] as $horizon) {
                 $row = $cached->get($group['key'].'|'.$horizon);
                 if (! $row || $row->input_hash !== $group['input_hash']) {
@@ -42,15 +43,14 @@ class ArimaForecastBuilder
 
     public function prepare(?int $branch, CarbonImmutable $end): array
     {
-        // A shared date lock also prevents overlap between all-branch and branch requests.
-        $lock = Cache::lock('arima-prepare:'.$end->toDateString(), config('forecast.group_timeout') + 60);
+        $lock = Cache::lock('arima-prepare:'.$end->toDateString(), 
+        config('forecast.group_timeout') + 60);
         if (! $lock->get()) {
             return ['complete' => false, 'busy' => true, 'remaining' => null];
         }
 
         try {
             $pending = $this->pending($branch, $end);
-            // One model per request keeps each HTTP request bounded by the group timeout.
             if ($pending !== []) {
                 $this->build([$pending[0]]);
             }
@@ -70,8 +70,9 @@ class ArimaForecastBuilder
             $result = $results[$group['key'].'|'.$group['horizon']];
             if ($result['status'] === 'ok') {
                 $daily = $result['daily'] ?? [];
-                if (count($daily) !== $group['horizon'] || collect($daily)->contains(fn ($value) => ! is_numeric($value) || ! is_finite((float) $value) || $value < 0)) {
-                    throw new \RuntimeException('Ramalan harian ARIMA tidak lengkap atau tidak valid.');
+                if (count($daily) !== $group['horizon'] || collect($daily)->contains(fn ($value) 
+                    => ! is_numeric($value) || ! is_finite((float) $value) || $value < 0)) {
+                    throw new \RuntimeException('Prediksi harian ARIMA tidak lengkap atau tidak valid.');
                 }
             }
             foreach ($group['horizons'] as $horizon) {
@@ -90,11 +91,16 @@ class ArimaForecastBuilder
                 $group = $forecast['group'];
                 $row = $forecast['result'];
                 DB::table('inventory_forecasts')->updateOrInsert([
-                    'branch_id' => $group['branch_id'], 'category_id' => $group['category_id'], 'kadar' => $group['kadar'],
-                    'cutoff' => $group['cutoff'], 'horizon' => $row['horizon'], 'method' => 'ARIMA', 'version' => config('forecast.version'),
+                    'branch_id' => $group['branch_id'], 'category_id' 
+                    => $group['category_id'], 'kadar' => $group['kadar'],'cutoff' 
+                    => $group['cutoff'], 'horizon' => $row['horizon'], 'method' 
+                    => 'ARIMA', 'version' => config('forecast.version'),
                 ], [
-                    'input_hash' => $group['input_hash'], 'status' => $row['status'], 'total' => $row['total'],
-                    'details' => json_encode($row, JSON_THROW_ON_ERROR), 'created_at' => now(), 'updated_at' => now(),
+                    'input_hash' => $group['input_hash'], 'status' 
+                    => $row['status'], 'total' => $row['total'],'details' 
+                    => json_encode($row, JSON_THROW_ON_ERROR), 
+                    'created_at' => now(), 
+                    'updated_at' => now(),
                 ]);
             }
         });

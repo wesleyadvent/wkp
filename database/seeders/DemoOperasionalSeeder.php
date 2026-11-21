@@ -27,9 +27,9 @@ class DemoOperasionalSeeder extends Seeder
     /**
      * Mengisi ulang data operasional untuk kebutuhan demo.
      *
-     * Setiap cabang memiliki 500 pelanggan, 600 stok tersedia, minimal 50
-     * penjualan valid/hari, 30 pembelian/hari, dan 5 nota service/hari pada
-     * rentang 365 hari terakhir. Barang yang terjual tetap dicatat sebagai
+     * Setiap cabang memiliki 500 pelanggan, 600 stok tersedia, 10-50
+     * penjualan valid/hari buka, 15-30 pembelian/hari buka, dan 5-8 nota
+     * service/hari buka pada rentang minimal 365 hari terakhir. Barang yang terjual tetap dicatat sebagai
      * unit terpisah agar riwayat penjualan dan analisis persediaan konsisten.
      */
     public function run(): void
@@ -51,9 +51,7 @@ class DemoOperasionalSeeder extends Seeder
             foreach ($branches as $branch) {
                 for ($i = $this->days - 1; $i >= -30; $i--) {
                     $date = $today->subDays($i);
-                    // Dataset demo beroperasi setiap hari agar minimum transaksi
-                    // per hari terpenuhi dan seri prediksi tidak kehilangan observasi.
-                    $calendar[] = ['branch_id' => $branch->id, 'tanggal' => $date->toDateString(), 'buka' => true, 'pencatatan_lengkap' => $i >= 0 ? true : null];
+                    $calendar[] = ['branch_id' => $branch->id, 'tanggal' => $date->toDateString(), 'buka' => BranchCalendar::isOpen($branch->kode_cabang, $date), 'pencatatan_lengkap' => $i >= 0 ? true : null];
                 }
             }
             $this->insertChunks('kalender_cabang', $calendar);
@@ -70,7 +68,7 @@ class DemoOperasionalSeeder extends Seeder
                 ['nama_service' => 'Perbaikan Pengait', 'harga_default' => 65000],
             ])->map(fn (array $type) => JenisLayanan::updateOrCreate(
                 ['nama_service' => $type['nama_service']],
-                $type + ['keterangan' => 'Layanan demo operasional', 'is_active' => true],
+                $type + ['keterangan' => 'Layanan perawatan dan perbaikan perhiasan', 'is_active' => true],
             ));
 
             foreach ($branches as $branch) {
@@ -190,10 +188,24 @@ class DemoOperasionalSeeder extends Seeder
             }
         }
         fclose($file);
-        // Harga 1 gram dilaporkan oleh ANTARA untuk 12 November 2026.
-        $observed['2026-11-12'] = 2518000;
-        $observed['2026-11-13'] = 2509000;
-        $observed['2026-11-14'] = 2517000;
+        // Acuan terkini: ANTARA, 20 November 2026 (24K Rp2.500.000/gram).
+        // Celah setelah arsip historis diisi harga sintetis yang dilabeli jelas.
+        $lastArchiveDate = array_key_last($observed);
+        $lastArchivePrice = $observed[$lastArchiveDate];
+        $anchorDate = CarbonImmutable::parse('2026-11-19', 'Asia/Jakarta');
+        $archiveDate = CarbonImmutable::parse($lastArchiveDate, 'Asia/Jakarta');
+        $gapDays = (int) $archiveDate->diffInDays($anchorDate);
+        $simulatedDates = [];
+        for ($offset = 1; $offset < $gapDays; $offset++) {
+            $key = $archiveDate->addDays($offset)->toDateString();
+            $fraction = $offset / $gapDays;
+            $noise = (abs(crc32('harga|'.$key)) % 18001) - 9000;
+            $observed[$key] = round(($lastArchivePrice + (2511000 - $lastArchivePrice) * $fraction
+                + 28000 * sin(2 * M_PI * $fraction) + $noise) / 1000) * 1000;
+            $simulatedDates[$key] = true;
+        }
+        $observed['2026-11-19'] = 2511000;
+        $observed['2026-11-20'] = 2500000;
         ksort($observed);
         $lastPrice = null;
         $lastDate = null;
@@ -218,7 +230,8 @@ class DemoOperasionalSeeder extends Seeder
             }
             $reference24K = $lastPrice;
             $this->antam[$key] = $reference24K;
-            $antamRows[] = ['tanggal' => $key, 'harga' => $reference24K, 'tanggal_sumber' => $lastDate, 'sumber' => $lastDate >= '2026-11-12' ? 'ANTARA Logam Mulia '.$lastDate : 'theonegareth/antam_historical_gold_prices'];
+            $source = isset($simulatedDates[$lastDate]) ? 'Simulasi harga demo; interpolasi arsip ke acuan ANTARA 20 November 2026' : ($lastDate >= '2026-11-19' ? 'ANTARA Logam Mulia 20 November 2026' : 'theonegareth/antam_historical_gold_prices');
+            $antamRows[] = ['tanggal' => $key, 'harga' => $reference24K, 'tanggal_sumber' => $lastDate, 'sumber' => $source];
             for ($karat = 8; $karat <= 24; $karat++) {
                 $price = round($reference24K * $karat / 24, 2);
                 if ($dayOffset === 0) {
@@ -240,7 +253,7 @@ class DemoOperasionalSeeder extends Seeder
             $lastPrice = $observed[$currentKey];
             $lastDate = $currentKey;
         }
-        $antamRows[] = ['tanggal' => $currentKey, 'harga' => $lastPrice, 'tanggal_sumber' => $lastDate, 'sumber' => $lastDate === '2026-11-14' ? 'Logam Mulia via Liputan6, 14 November 2026' : ($lastDate >= '2026-11-12' ? 'ANTARA Logam Mulia '.$lastDate : 'theonegareth/antam_historical_gold_prices')];
+        $antamRows[] = ['tanggal' => $currentKey, 'harga' => $lastPrice, 'tanggal_sumber' => $lastDate, 'sumber' => isset($simulatedDates[$lastDate]) ? 'Simulasi harga demo; interpolasi arsip ke acuan ANTARA 20 November 2026' : ($lastDate >= '2026-11-19' ? 'ANTARA Logam Mulia 20 November 2026' : 'theonegareth/antam_historical_gold_prices')];
         for ($karat = 8; $karat <= 24; $karat++) {
             $prices[$karat.'K'] = round($lastPrice * $karat / 24, 2);
             $priceRows[] = ['tanggal' => $currentKey, 'kadar' => $karat.'K', 'harga_per_gram' => $prices[$karat.'K'], 'keterangan' => 'Harga acuan simulasi; sumber ANTAM '.$lastDate, 'created_at' => $currentDate, 'updated_at' => $currentDate];
@@ -289,10 +302,10 @@ class DemoOperasionalSeeder extends Seeder
 
         for ($dayOffset = $this->days - 1; $dayOffset >= 0; $dayOffset--) {
             $date = $today->subDays($dayOffset);
-            $weekend = $date->isWeekend() ? 8 : 0;
-            $payday = $date->day >= 25 || $date->day <= 5 ? 6 : 0;
-            $trend = (int) floor(8 * ($this->days - 1 - $dayOffset) / $this->days);
-            $validSales = 50 + (abs(crc32($branch->kode_cabang.$date->toDateString())) % 19) + $weekend + $payday + $trend + $this->eidIncrease($branch, $date);
+            if (! BranchCalendar::isOpen($branch->kode_cabang, $date)) {
+                continue;
+            }
+            $validSales = $this->dailyTransactionCount($branch, $date, $dayOffset, 'jual', 10, 50);
             $dailyPrices = $this->pricesFor($date);
             for ($slot = 1; $slot <= $validSales; $slot++) {
                 $seed = ($dayOffset * 67) + ($slot * 17) + ($branch->id * 11);
@@ -364,7 +377,7 @@ class DemoOperasionalSeeder extends Seeder
                     $this->money(($weight * $price) + $makingCost),
                     $photoPath,
                     'tersedia',
-                    $today->subDays(1 + ($seed % 45))->setTime(10 + ($stockNumber % 8), ($stockNumber * 3) % 60),
+                    $this->previousOpenDate($branch, $today->subDays(1 + ($seed % 45)))->setTime(10 + ($stockNumber % 8), ($stockNumber * 3) % 60),
                 );
             }
         }
@@ -416,7 +429,10 @@ class DemoOperasionalSeeder extends Seeder
 
         for ($dayOffset = $this->days - 1; $dayOffset >= 0; $dayOffset--) {
             $date = $today->subDays($dayOffset);
-            $dailyCount = 30 + abs(crc32('beli'.$branch->kode_cabang.$date->toDateString())) % 7;
+            if (! BranchCalendar::isOpen($branch->kode_cabang, $date)) {
+                continue;
+            }
+            $dailyCount = $this->dailyTransactionCount($branch, $date, $dayOffset, 'beli', 15, 30);
             $dailyPrices = $this->pricesFor($date);
             for ($slot = 1; $slot <= $dailyCount; $slot++) {
                 $seed = ($dayOffset * 43) + ($slot * 19) + ($branch->id * 7);
@@ -515,6 +531,9 @@ class DemoOperasionalSeeder extends Seeder
 
         for ($dayOffset = $this->days - 1; $dayOffset >= 0; $dayOffset--) {
             $date = $today->subDays($dayOffset);
+            if (! BranchCalendar::isOpen($branch->kode_cabang, $date)) {
+                continue;
+            }
             $dailyCount = 5 + abs(crc32('servis'.$branch->kode_cabang.$date->toDateString())) % 4;
             for ($slot = 1; $slot <= $dailyCount; $slot++) {
                 $seed = ($dayOffset * 29) + ($slot * 13) + ($branch->id * 5);
@@ -540,8 +559,8 @@ class DemoOperasionalSeeder extends Seeder
                     'harga_service' => $primaryPrice + $secondaryPrice,
                     'status_service' => $status,
                     'tanggal_masuk' => $date->toDateString(),
-                    'estimasi_selesai' => $date->addDays(2)->toDateString(),
-                    'tanggal_ambil' => $status === 'sudah_diambil' ? $date->addDays(2)->toDateString() : null,
+                    'estimasi_selesai' => $this->nextOpenDate($branch, $date->addDays(2))->toDateString(),
+                    'tanggal_ambil' => $status === 'sudah_diambil' ? $this->nextOpenDate($branch, $date->addDays(2))->toDateString() : null,
                     'employee_id' => $employeeId,
                     'employee_name' => $employeeName,
                     'created_by' => $operatorId,
@@ -803,6 +822,41 @@ class DemoOperasionalSeeder extends Seeder
     private function money(float $value): float
     {
         return round($value, 2);
+    }
+
+    private function previousOpenDate(Cabang $branch, CarbonImmutable $date): CarbonImmutable
+    {
+        while (! BranchCalendar::isOpen($branch->kode_cabang, $date)) {
+            $date = $date->subDay();
+        }
+
+        return $date;
+    }
+
+    private function nextOpenDate(Cabang $branch, CarbonImmutable $date): CarbonImmutable
+    {
+        while (! BranchCalendar::isOpen($branch->kode_cabang, $date)) {
+            $date = $date->addDay();
+        }
+
+        return $date;
+    }
+
+    private function dailyTransactionCount(Cabang $branch, CarbonImmutable $date, int $dayOffset, string $type, int $minimum, int $maximum): int
+    {
+        // Preferensi cabang, siklus mingguan/bulanan, tren dan lonjakan Lebaran
+        // memberi pola yang bisa dipelajari, dengan variasi harian independen.
+        $profile = abs(crc32($type.'|'.$branch->kode_cabang));
+        $progress = ($this->days - 1 - $dayOffset) / $this->days;
+        $baseline = $type === 'jual' ? 22 : 20;
+        $weekly = 5 * sin(2 * M_PI * ($date->dayOfWeek + $profile % 7) / 7);
+        $monthly = 3 * sin(2 * M_PI * $date->dayOfYear / 30.4);
+        $payday = $date->day >= 25 || $date->day <= 5 ? 4 : 0;
+        $noise = (abs(crc32($type.'|'.$branch->kode_cabang.'|'.$date->toDateString())) % 15) - 7;
+        $eid = $this->eidIncrease($branch, $date) * ($type === 'jual' ? 1 : 0.4);
+        $count = (int) round($baseline + ($profile % 7) - 3 + 5 * $progress + $weekly + $monthly + $payday + $noise + $eid);
+
+        return max($minimum, min($maximum, $count));
     }
 
     /** @return array{0: string, 1: string} */

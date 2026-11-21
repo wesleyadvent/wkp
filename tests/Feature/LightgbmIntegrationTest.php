@@ -68,9 +68,9 @@ class LightgbmIntegrationTest extends TestCase
             ->assertOk()
             ->assertSee('Layanan Flask LightGBM belum menyala atau tidak dapat dihubungi.')
             ->assertSee('.\\.venv-lightgbm\\Scripts\\python.exe services\\lightgbm\\serve.py')
-            ->assertDontSee('kelompok memiliki ramalan LightGBM yang belum tersedia.')
+            ->assertDontSee('kelompok memiliki prediksi LightGBM yang belum tersedia.')
             ->assertDontSee('Connection refused')
-            ->assertViewHas('rows', fn ($rows) => $rows->getCollection()->every(fn ($row) => $row['ramalan_unit'] === null && $row['ramalan_unit_periode'] === null
+            ->assertViewHas('rows', fn ($rows) => $rows->getCollection()->every(fn ($row) => $row['prediksi_unit'] === null && $row['prediksi_unit_periode'] === null
                 && $row['rop'] === null && $row['jumlah_perlu_disiapkan'] === null));
         Http::assertNotSent(fn ($request) => $request->method() === 'POST');
     }
@@ -84,7 +84,7 @@ class LightgbmIntegrationTest extends TestCase
             $this->get(route('inventory-analysis.lightgbm', ['cutoff' => $this->end->toDateString()]))
                 ->assertOk()->assertSee('Layanan Flask LightGBM merespons, tetapi model belum siap.')
                 ->assertDontSee('Layanan Flask LightGBM belum menyala')
-                ->assertDontSee('kelompok memiliki ramalan LightGBM yang belum tersedia.');
+                ->assertDontSee('kelompok memiliki prediksi LightGBM yang belum tersedia.');
             Http::assertNotSent(fn ($request) => $request->method() === 'POST');
         }
     }
@@ -107,11 +107,11 @@ class LightgbmIntegrationTest extends TestCase
 
         $this->fakeReadyService(fn ($r) => Http::response($this->response($r->data())));
         $this->get($url)->assertOk()->assertDontSee('Layanan Flask LightGBM belum menyala')
-            ->assertViewHas('summary', fn ($summary) => $summary['ramalan_belum_tersedia'] === 0);
+            ->assertViewHas('summary', fn ($summary) => $summary['prediksi_belum_tersedia'] === 0);
 
         DB::table('kalender_cabang')->where('tanggal', $this->end->toDateString())->update(['pencatatan_lengkap' => null]);
         $this->get($url)->assertOk()->assertDontSee('Layanan Flask LightGBM belum menyala')
-            ->assertSee('kelompok memiliki ramalan LightGBM yang belum tersedia.');
+            ->assertSee('kelompok memiliki prediksi LightGBM yang belum tersedia.');
     }
 
     private function sale(CarbonImmutable $day, int $units, string $status = 'valid'): void
@@ -216,7 +216,7 @@ class LightgbmIntegrationTest extends TestCase
             $row = app(InventoryAnalysisService::class)->analyze($this->branch->id, 30, $this->end, 'LightGBM')->first();
             $this->assertSame('LightGBM', $row['metode_efektif'], $row['alasan_fallback'] ?? '');
             $this->assertSame('LightGBM', $row['metode_efektif_periode']);
-            $this->assertEqualsWithDelta($fixture['output']['predicted_units'], $row['ramalan_unit'], 1e-8);
+            $this->assertEqualsWithDelta($fixture['output']['predicted_units'], $row['prediksi_unit'], 1e-8);
             $this->assertSame((int) ceil($fixture['output']['predicted_units'] + 2), $row['rop']);
         }
     }
@@ -227,8 +227,8 @@ class LightgbmIntegrationTest extends TestCase
         $service = app(InventoryAnalysisService::class);
         $row = $service->analyze($this->branch->id, 30, $this->end, 'LightGBM')->first();
         $this->assertSame('LightGBM', $row['metode_efektif']);
-        $this->assertEquals(25.4, $row['ramalan_unit']);
-        $this->assertEquals(51.2, $row['ramalan_unit_periode']);
+        $this->assertEquals(25.4, $row['prediksi_unit']);
+        $this->assertEquals(51.2, $row['prediksi_unit_periode']);
         $this->assertSame(28, $row['rop']);
         $this->assertSame(16, $row['jumlah_perlu_disiapkan']);
         $this->assertSame('kritis', $row['status_persediaan']);
@@ -246,7 +246,7 @@ class LightgbmIntegrationTest extends TestCase
 
         Http::fake(fn () => throw new ConnectionException('Connection refused'));
         $row = $service->analyze($this->branch->id, 30, $this->end, 'LightGBM')->first();
-        $this->assertNull($row['ramalan_unit']);
+        $this->assertNull($row['prediksi_unit']);
         $this->assertNull($row['rop']);
         $this->assertSame('unreachable', $service->lightgbmStatus()['state']);
     }
@@ -278,15 +278,15 @@ class LightgbmIntegrationTest extends TestCase
             $this->assertNull($row['metode_efektif'], $failure);
             $this->assertNull($row['metode_efektif_periode'], $failure);
             $this->assertNotNull($row['alasan_fallback']);
-            $this->assertNull($row['ramalan_unit']);
-            $this->assertNull($row['ramalan_unit_periode']);
+            $this->assertNull($row['prediksi_unit']);
+            $this->assertNull($row['prediksi_unit_periode']);
             $this->assertNull($row['rop']);
             $this->assertNull($row['jumlah_perlu_disiapkan']);
-            $this->assertSame('ramalan_belum_tersedia', $row['status_persediaan']);
+            $this->assertSame('prediksi_belum_tersedia', $row['status_persediaan']);
         }
         $this->actingAs(Pengguna::factory()->create(['role' => 'admin']))
             ->get(route('inventory-analysis.lightgbm', ['cutoff' => $this->end->toDateString()]))
-            ->assertOk()->assertSee('Belum tersedia')->assertSee('Ramalan belum tersedia')
+            ->assertOk()->assertSee('Belum tersedia')->assertSee('Prediksi belum tersedia')
             ->assertDontSee('SMA/hari')->assertDontSee('fallback SMA')
             ->assertSee('Metode</dt><dd title="">LightGBM</dd>', false);
     }
@@ -327,8 +327,8 @@ class LightgbmIntegrationTest extends TestCase
         $this->get(route('inventory-settings.lightgbm.index'))->assertForbidden();
         DB::table('kalender_cabang')->where('tanggal', $this->end->toDateString())->update(['pencatatan_lengkap' => null]);
         $row = app(InventoryAnalysisService::class)->analyze($this->branch->id, 30, $this->end, 'LightGBM')->first();
-        $this->assertNull($row['ramalan_unit']);
-        $this->assertNull($row['ramalan_unit_periode']);
+        $this->assertNull($row['prediksi_unit']);
+        $this->assertNull($row['prediksi_unit_periode']);
         $this->assertNull($row['rop']);
         $this->branch->update(['kode_cabang' => 'NEW']);
         DB::table('kalender_cabang')->where('tanggal', $this->end->toDateString())->update(['pencatatan_lengkap' => true]);

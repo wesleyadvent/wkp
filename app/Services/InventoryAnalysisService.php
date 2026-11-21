@@ -70,13 +70,13 @@ class InventoryAnalysisService
                 'penjualan_periode_berjalan' => $sales, 'penjualan_periode_sebelumnya' => $prior, 'rata_rata_penjualan_harian' => ForecastMath::daily($current, 'SMA'),
                 'estimasi_harian_metode' => in_array($method, ['SMA', 'WMA'], true) ? ForecastMath::daily($current, $method) : null,
                 'persentase_perubahan' => $change, 'status_tren' => in_array(null, array_merge($current, $previous), true) ? 'data_belum_lengkap' : ($prior === 0 && $sales > 0 ? 'baru' : ($change >= 10 ? 'meningkat' : ($change !== null && $change <= -10 ? 'menurun' : 'stabil'))),
-                'lead_time_hari' => $lead, 'safety_stock' => $ss, 'rop' => $rop, 'jumlah_perlu_disiapkan' => $q, 'status_persediaan' => $rop === null ? (in_array($method, ['ARIMA', 'LightGBM'], true) ? 'ramalan_belum_tersedia' : 'data_belum_lengkap') : ForecastMath::status($g['stok_tersedia'], $rop, $q),
-                'menggunakan_konfigurasi_default' => $cfg === null, 'metode_diminta' => $method, 'metode_efektif' => $leadForecast['method'], 'alasan_fallback' => $leadForecast['reason'], 'ramalan_unit' => $forecast, 'tanggal_potong' => $end->toDateString(),
-                'ramalan_unit_periode' => $periodForecast['units'], 'metode_efektif_periode' => $periodForecast['method'], 'alasan_fallback_periode' => $periodForecast['reason'],
+                'lead_time_hari' => $lead, 'safety_stock' => $ss, 'rop' => $rop, 'jumlah_perlu_disiapkan' => $q, 'status_persediaan' => $rop === null ? (in_array($method, ['ARIMA', 'LightGBM'], true) ? 'prediksi_belum_tersedia' : 'data_belum_lengkap') : ForecastMath::status($g['stok_tersedia'], $rop, $q),
+                'menggunakan_konfigurasi_default' => $cfg === null, 'metode_diminta' => $method, 'metode_efektif' => $leadForecast['method'], 'alasan_fallback' => $leadForecast['reason'], 'prediksi_unit' => $forecast, 'tanggal_potong' => $end->toDateString(),
+                'prediksi_unit_periode' => $periodForecast['units'], 'metode_efektif_periode' => $periodForecast['method'], 'alasan_fallback_periode' => $periodForecast['reason'],
                 'versi_model' => $leadForecast['version'] ?? null, 'versi_model_periode' => $periodForecast['version'] ?? null,
                 'riwayat_mulai' => $leadForecast['history_start'], 'riwayat_mulai_periode' => $periodForecast['history_start'], 'riwayat_akhir' => $end->toDateString()];
         });
-        $priority = ['kritis' => 0, 'perlu_perhatian' => 1, 'aman' => 2, 'ramalan_belum_tersedia' => 3, 'data_belum_lengkap' => 4];
+        $priority = ['kritis' => 0, 'perlu_perhatian' => 1, 'aman' => 2, 'prediksi_belum_tersedia' => 3, 'data_belum_lengkap' => 4];
 
         return $rows->sortBy(fn ($r) => [$priority[$r['status_persediaan']], -($r['jumlah_perlu_disiapkan'] ?? 0), $r['cabang'], $r['kategori'], $r['kadar']])->values();
     }

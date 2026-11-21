@@ -70,7 +70,7 @@ class ForecastComparisonTest extends TestCase
     {
         $this->actingAs(Pengguna::factory()->create(['role' => 'admin']));
         $this->get(route('forecast-comparison.index', ['branch_id' => $this->desa->id]))->assertOk()
-            ->assertSee('Perbandingan Akurasi Ramalan')->assertSee('MAPE')->assertSee('Peringkat pertama bersama')
+            ->assertSee('Perbandingan Akurasi Prediksi')->assertSee('MAPE')->assertSee('Peringkat pertama bersama')
             ->assertViewHas('result', function ($result) {
                 $sma = collect($result['rankings'])->firstWhere('method', 'SMA');
                 $this->assertEqualsWithDelta(4, $sma['mae'], 1e-12);

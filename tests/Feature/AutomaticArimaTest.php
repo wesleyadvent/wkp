@@ -70,7 +70,7 @@ class AutomaticArimaTest extends TestCase
         $this->prepare()->assertOk()->assertJson(['complete' => true]);
         $this->get(route('inventory-analysis.arima', ['cutoff' => '2026-11-12']))->assertOk()
             ->assertViewHas('arimaPending', 0)->assertDontSee('data-arima-prepare', false)
-            ->assertViewHas('rows', fn ($rows) => $rows->first()['ramalan_unit'] === 14.0);
+            ->assertViewHas('rows', fn ($rows) => $rows->first()['prediksi_unit'] === 14.0);
         $this->prepare('2026-11-11')->assertOk()->assertJson(['complete' => true]);
         $this->assertDatabaseCount('inventory_forecasts', 8);
     }

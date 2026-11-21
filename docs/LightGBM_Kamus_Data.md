@@ -5,7 +5,7 @@ Fitur ekspor dan permintaan API berasal dari `LightgbmFeatureBuilder`. Urutan da
 | Kolom | Tipe dan definisi |
 | --- | --- |
 | `schema_version` | String `multihorizon-1`. |
-| `as_of_date` / `tanggal_ramalan` | Tanggal potong t, ISO `YYYY-MM-DD`, Asia/Jakarta. |
+| `as_of_date` / `tanggal_prediksi` | Tanggal potong t, ISO `YYYY-MM-DD`, Asia/Jakarta. |
 | `target_end_date` | t + H hari kalender. |
 | `group_key` | Kunci internal kelompok; dipakai mencocokkan batch, bukan fitur model. |
 | `branch_code` | Kategori numerik: DSA=0, MDR=1, PWG=2, SPH=3. |

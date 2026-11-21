@@ -9,7 +9,7 @@ from scipy.optimize import minimize
 from scipy.signal import lfilter
 
 GROUP = ["kode_cabang", "kategori", "kadar"]
-DATE = "tanggal_ramalan"
+DATE = "tanggal_prediksi"
 SALES = "penjualan_hari_ini"
 PRICE = "harga_antam"
 PRICE_CHANGE = "perubahan_harga_7_persen"
@@ -37,7 +37,7 @@ def load_panel(path):
     if not np.isfinite(frame[SALES]).all() or not (frame[SALES].ge(0) & frame[SALES].mod(1).eq(0)).all():
         raise ValueError('Penjualan harian harus berupa jumlah unit nonnegatif.')
     if frame['tanggal_sumber_harga'].gt(frame[DATE]).any():
-        raise ValueError('Tanggal sumber harga melewati tanggal ramalan.')
+        raise ValueError('Tanggal sumber harga melewati tanggal prediksi.')
     if not set(frame['kode_cabang'].unique()).issubset(CLOSED_WEEKDAY):
         raise ValueError('Jadwal cabang belum tersedia.')
     series = frame.pivot(index=GROUP, columns=DATE, values=SALES).sort_index(axis=1)
@@ -149,7 +149,7 @@ def rolling_arima(values, dates, origins, order):
     p, d, q = order
     train_end = dates.searchsorted(pd.Timestamp(PERIODS['latih'][1]), side='right')
     if train_end == 0 or int(origins.min()) < train_end:
-        raise ValueError('Tanggal ramalan ARIMA harus sesudah periode estimasi.')
+        raise ValueError('Tanggal prediksi ARIMA harus sesudah periode estimasi.')
     predictions = np.empty((len(values), len(origins), max(HORIZONS)))
     steps = np.arange(max(HORIZONS))
     for index, sales in enumerate(values):

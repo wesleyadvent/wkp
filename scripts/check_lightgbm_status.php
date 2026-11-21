@@ -23,11 +23,11 @@ foreach ($cutoffs as $cutoff) {
     $entry = ['cutoff' => $cutoff];
     foreach ([30, 60, 90] as $period) {
         $rows = app(InventoryAnalysisService::class)->analyze(null, $period, $end, 'LightGBM');
-        $missing = $rows->filter(fn ($row) => $row['ramalan_unit'] === null || $row['ramalan_unit_periode'] === null || $row['rop'] === null);
+        $missing = $rows->filter(fn ($row) => $row['prediksi_unit'] === null || $row['prediksi_unit_periode'] === null || $row['rop'] === null);
         $entry['windows'][$period] = [
             'groups' => $rows->count(),
-            'lead_time_available' => $rows->filter(fn ($row) => $row['metode_efektif'] === 'LightGBM' && $row['ramalan_unit'] !== null)->count(),
-            'projection_available' => $rows->filter(fn ($row) => $row['metode_efektif_periode'] === 'LightGBM' && $row['ramalan_unit_periode'] !== null)->count(),
+            'lead_time_available' => $rows->filter(fn ($row) => $row['metode_efektif'] === 'LightGBM' && $row['prediksi_unit'] !== null)->count(),
+            'projection_available' => $rows->filter(fn ($row) => $row['metode_efektif_periode'] === 'LightGBM' && $row['prediksi_unit_periode'] !== null)->count(),
             'lead_time_groups' => $rows->countBy('lead_time_hari')->all(),
             'unavailable' => $missing->map(fn ($row) => array_intersect_key($row, array_flip(['cabang', 'kategori', 'kadar', 'alasan_fallback', 'alasan_fallback_periode'])))->values()->all(),
         ];
